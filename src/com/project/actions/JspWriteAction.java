@@ -38,7 +38,7 @@ public class JspWriteAction extends Action {
 	
 	private String processWrite(ActionMapping mapping, JspWriteForm form, HttpServletRequest request, HttpServletResponse response) {
 		
-		
+		System.out.println("Inside processWrite method");
 		String forward="success";
 		String jsp_name = "test.jsp";
 		HashMap<String,String> params_list = new HashMap<String, String>();
@@ -58,6 +58,7 @@ public class JspWriteAction extends Action {
 	
 	public String writeToJsp(HashMap<String, String> params,
 			HashMap<String, String> buttons_map, String jsp_loc,HttpServletRequest request) {
+		System.out.println("Inside writeToJsp method");
 		String[] variableNames = params.keySet().toArray(new String[0]);
 		StringBuilder content = new StringBuilder();
 		BufferedReader br = null;
@@ -92,8 +93,8 @@ public class JspWriteAction extends Action {
 		}
 		html.append("</table>");
 		for(Map.Entry<String, String> entry: buttons_map.entrySet()){
-			html.append(MessageFormat.format((String) prop.get("buttonTag"), Constants.BUTTON+i, entry.getKey()) + "\n");
-			html.append(MessageFormat.format((String) prop.get("eventTag"), Constants.EVENT+i, entry.getValue()) + "\n");
+			html.append(MessageFormat.format((String) prop.get("buttonTag"), Constants.BUTTON+i, entry.getKey(),entry.getValue()) + "\n");
+			//html.append(MessageFormat.format((String) prop.get("eventTag"), Constants.EVENT+i, entry.getValue()) + "\n");
 			i++;
 		}
 		for (int index = 0; index < content.length(); index++) {
@@ -126,6 +127,7 @@ public class JspWriteAction extends Action {
 
 	private Properties getPropertiesFromClasspath(String propFileName)
 			throws IOException {
+		System.out.println("Inside getPropertiesFromClasspath method");
 		Properties props = new Properties();
 		InputStream inputStream = this.getClass().getClassLoader()
 				.getResourceAsStream(propFileName);
@@ -140,10 +142,10 @@ public class JspWriteAction extends Action {
 	}
 
 	public String createJspLocation(String jspName,HttpServletRequest request) {
+		System.out.println("Inside createJspLocation method");
 		boolean flag = false;
-		String proj_location = "";
 		File jsp = null;
-		String web =request.getServletContext().getContextPath();//"WebContent\\mockUI";
+		String web =request.getServletContext().getContextPath();
 		File web_dir = new File(web);
 
 		if (!web_dir.isDirectory()) {

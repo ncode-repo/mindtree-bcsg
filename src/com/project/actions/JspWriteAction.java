@@ -20,6 +20,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 import com.project.forms.JspWriteForm;
 import com.project.util.Constants;
@@ -50,11 +52,13 @@ public class JspWriteAction extends Action {
 			buttons_list.put(captions[i], events[i]);
 		    }
 		forward = writeToJsp(params_list,buttons_list, jsp_name,request,response);
+		ActionMessages messages = new ActionMessages();
 		if(forward.equalsIgnoreCase("success")){
-			request.setAttribute("jsp_write", "true");
+			messages.add("success", new ActionMessage("success","JSP "+jsp_name+" is created successfully"));
 		}else if(forward.equalsIgnoreCase("error")){
 			request.setAttribute("jsp_write", "false");
 		}
+		saveMessages(request, messages); // storing messages as request attributes
 		return forward;
 	}
 

@@ -32,7 +32,11 @@ function msg(flag){
 		<a class="logo" id="logo"></a>
 		<div class="links-nav"></div>
 	</div>
-	
+	<div><logic:messagesPresent message="true">
+   <html:messages property="success" id="message" message="true">
+     <bean:write name="message"/><br/>
+   </html:messages>
+</logic:messagesPresent></div>
 	<div class="box6">
 		<html:form action="/parseBean" method="post"
 			enctype="multipart/form-data">

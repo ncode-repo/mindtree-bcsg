@@ -34,4 +34,6 @@
 	    	<forward name="error" path="/WEB-INF/content/pages/renderJsp.jsp"/>
 		</action>
 	</action-mappings>
+	<message-resources
+		parameter="ApplicationResources" null="false"/>
 </struts-config>

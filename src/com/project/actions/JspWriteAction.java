@@ -13,11 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -122,13 +120,13 @@ public class JspWriteAction extends Action {
 			try {
 				fw = new FileWriter(jsp.getAbsoluteFile());
 				bw = new BufferedWriter(fw);
-				//response.setContentLength( fileSize); 
-				//response.setContentType("application/x-download");
-				//response.setHeader("Content-disposition", "attachment; filename="
-				//+ jsp_loc);
-				/*response.setHeader("Cache-Control",
-				"max-age=" + TIMEOUT);*/
-				/*ServletOutputStream outStream = response.getOutputStream();
+				/*//response.setContentLength( fileSize); 
+				response.setContentType("application/x-download");
+				response.setHeader("Content-disposition", "attachment; filename="
+				+ jsp_loc);
+				response.setHeader("Cache-Control",
+				"max-age=" + TIMEOUT);
+				ServletOutputStream outStream = response.getOutputStream();
 				outStream.write(content.toString().getBytes());
 				outStream.flush();
 				outStream.close();*/

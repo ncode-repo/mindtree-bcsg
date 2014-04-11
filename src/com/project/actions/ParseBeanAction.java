@@ -17,6 +17,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 
+import com.project.forms.JspWriteForm;
 import com.project.forms.ParseBeanForm;
 import com.project.util.Constants;
 
@@ -28,18 +29,18 @@ public class ParseBeanAction extends Action {
 
 	private String processParseBean(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) {
-		ParseBeanForm myForm = (ParseBeanForm) form;
+		JspWriteForm myForm = (JspWriteForm) form;
 
 		String forward = "success";
 
 		// Process the FormFile
-		FormFile myFile = myForm.getTheFile();
+		FormFile javaBean = myForm.getJavaBean();
 		// Get the file name
-		String fileName = myFile.getFileName();
+		String fileName = javaBean.getFileName();
 		File fileToCreate = null;
 		HashMap<String, String> params = new HashMap<String, String>();
 		// Get the servers upload directory real path name
-		String filePath = "";
+		String filePath = request.getContextPath();
 		if (!"".equals(fileName)) {
 			// Create file
 			File fileDirectory = new File(filePath);
@@ -53,7 +54,7 @@ public class ParseBeanAction extends Action {
 			FileOutputStream fileOutStream;
 			try {
 				fileOutStream = new FileOutputStream(fileToCreate);
-				fileOutStream.write(myFile.getFileData());
+				fileOutStream.write(javaBean.getFileData());
 				fileOutStream.flush();
 				fileOutStream.close();
 			} catch (FileNotFoundException e) {
@@ -66,7 +67,7 @@ public class ParseBeanAction extends Action {
 		} else {
 			forward = "error";
 		}
-
+		fileToCreate.delete();
 		request.setAttribute("params", params);
 		return forward;
 	}

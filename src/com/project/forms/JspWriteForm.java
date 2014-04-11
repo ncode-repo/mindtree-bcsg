@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 
 public class JspWriteForm extends ActionForm {
 
@@ -18,7 +19,15 @@ public class JspWriteForm extends ActionForm {
 	private String[] values; // params_list
 	private String[] event;
 	private String[] caption;
+	private FormFile javaBean;
 	
+	public FormFile getJavaBean() {
+		return javaBean;
+	}
+
+	public void setJavaBean(FormFile javaBean) {
+		this.javaBean = javaBean;
+	}
 	public void setValues(String[] values) {
 		this.values = values;
 	}
@@ -49,6 +58,7 @@ public class JspWriteForm extends ActionForm {
 		this.values = null;
 		this.event = null;
 		this.caption = null;
+		this.javaBean = null;
 		super.reset(mapping, request);
 	}
 }

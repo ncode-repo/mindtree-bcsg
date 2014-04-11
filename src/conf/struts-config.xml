@@ -20,7 +20,7 @@
 		<action
 		path="/parseBean"
 		type="com.project.actions.ParseBeanAction"
-		name="ParseBeanForm"
+		name="JspWriteForm"
 		scope="request">
 			<forward name="success" path="/WEB-INF/content/pages/renderJsp.jsp"/>
 	    	<forward name="error" path="/WEB-INF/content/pages/uploadBean.jsp"/>

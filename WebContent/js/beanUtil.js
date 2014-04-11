@@ -38,6 +38,7 @@ $(document).ready(function () {
 
 	$('#remove').click(function() {
 		!$('#select2 option:selected').remove().appendTo('#select1');
+		$('#select2').css('display', 'none');
 		if(document.getElementById("select2").length==0){
 			$('#buttons').css("display","none");
 			$('#TextBoxesGroup').css("display","none");   
@@ -68,9 +69,9 @@ $(document).ready(function () {
 		}   
 		counter--;	 
 		$("#TextBoxDiv" + counter).remove();
-		}); 
+	}); 
 		
-		$('#button1').click(function(){
+	$('#button1').click(function(){
 		if(counter==0){
 			alert("Add some buttons");
 	  		return false;

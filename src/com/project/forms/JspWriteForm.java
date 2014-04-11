@@ -16,31 +16,12 @@ public class JspWriteForm extends ActionForm {
 	private static final long serialVersionUID = 1L;
 	private Map map = new HashMap(); 
 	private String[] values; // params_list
-	/*private List button_list = null;// button_list
-	 */
-
 	private String[] event;
 	private String[] caption;
 	
 	public void setValues(String[] values) {
 		this.values = values;
 	}
-
-	/*public void setValue(String key, Object value) {
-		System.out.println("map.putting(" + key + ", " + value + ")");
-
-		map.put(key, value);
-
-	}
-
-	public Object getValue(String key) {
-		System.out.println("map.getting(" + key + ", " + map.get(key) + ")");
-		return map.get(key);
-	}*/
-
-	/*public Map getMap() {
-		return map;
-	}*/
 
 	public String[] getValues() {
 		return values;
@@ -62,33 +43,6 @@ public class JspWriteForm extends ActionForm {
 		this.event = event;
 	}
 
-	/*public List getButton_list() {
-		return button_list;
-	}
-
-	public void setButton_list(List button_list) {
-		this.button_list = button_list;
-	}
-	
-	 // this is the method that will be called to save
-    //  the indexed properties when the form is saved
-    public Button getButtonItem(int index)
-    {
-        // make sure that orderList is not null
-        if(this.button_list == null)
-        {
-            this.button_list = new ArrayList();
-        }
- 
-        // indexes do not come in order, populate empty spots
-        while(index >= this.button_list.size())
-        {
-            this.button_list.add(new Button());
-        }
- 
-        // return the requested item
-        return (Button) button_list.get(index);
-    }*/
 	@Override
 	public void reset(ActionMapping mapping, HttpServletRequest request) {
 		// TODO Auto-generated method stub

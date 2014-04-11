@@ -10,11 +10,14 @@
 <%@ page import="java.util.Iterator"%>
 <html>
 <head>
-<title>MockUpTest</title>
+<title>Upload Bean</title>
 <meta content="text/html; charset=us-ascii" http-equiv="Content-Type">
 <script type="text/javascript">  
-function msg(){
+function msg(flag){
+	if(flag=="true")
 	alert("Jsp was created and written successfully");
+	else
+		return true;
 }
 </script>
 </head>
@@ -22,11 +25,8 @@ function msg(){
 	if((request.getAttribute("jsp_write")!=null)){
 		attrib = (String)request.getAttribute("jsp_write");
 	}
-	if(attrib!=null&&attrib.equalsIgnoreCase("true")){ %>
-<body onload="msg();">	
-	<%}else{ %>
-	<body>
-<%} %>
+	%>
+<body onload="msg('<%=attrib%>');">	
 <div id="site">
 	<div class="x" id="header">
 		<a class="logo" id="logo"></a>
@@ -34,7 +34,7 @@ function msg(){
 	</div>
 	
 	<div class="box6">
-		<html:form action="/ParseBean" method="post"
+		<html:form action="/parseBean" method="post"
 			enctype="multipart/form-data">
 			<table>
 				<tr>

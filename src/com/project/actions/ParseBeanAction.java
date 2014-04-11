@@ -11,6 +11,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -18,6 +19,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 
 import com.project.forms.ParseBeanForm;
+import com.project.util.Constants;
 
 /**
  * Struts File Upload Action Form.
@@ -25,9 +27,8 @@ import com.project.forms.ParseBeanForm;
  */
 public class ParseBeanAction extends Action {
 
-	@SuppressWarnings("unused")
-	private String processParseBean(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("Inside processParseBean method");
+	private String processParseBean(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
 		ParseBeanForm myForm = (ParseBeanForm) form;
 
 		String forward = "success";
@@ -37,8 +38,7 @@ public class ParseBeanAction extends Action {
 		// Get the file name
 		String fileName = myFile.getFileName();
 		File fileToCreate = null;
-		System.out.println("fileName "+fileName);
-		HashMap<String,String> params = new HashMap<String,String>();
+		HashMap<String, String> params = new HashMap<String, String>();
 		// Get the servers upload directory real path name
 		String filePath = "";
 		if (!"".equals(fileName)) {
@@ -62,17 +62,20 @@ public class ParseBeanAction extends Action {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			 params = parse(fileToCreate);
-			 forward ="success";
+			params = parse(fileToCreate);
+			forward = "success";
+		} else {
+			forward = "error";
 		}
-		else{
-			forward ="error";
-		}
-		
+
 		request.setAttribute("params", params);
-		fileToCreate.delete();
 		return forward;
 	}
+/**
+ * Parse the input form bean variables into a map
+ * @param formBean
+ * @return
+ */
 	private HashMap<String, String> parse(File formBean) {
 		HashMap<String, String> paramsMap = new HashMap<String, String>();
 		BufferedReader br = null;
@@ -90,11 +93,11 @@ public class ParseBeanAction extends Action {
 				//
 				strLine = strLine.replaceAll(", ", ","); // To get the hashmap
 															// datatypes.
-				if (strLine.trim().startsWith("private")) {
+				if (strLine.trim().startsWith(Constants.KEYWORD_PRIVATE)) {
 					String[] token = strLine.split(" ");
 					if (token.length >= 3
 							&& (strLine.contains("=") || strLine.contains(";"))) {
-						if (token[0].trim().equalsIgnoreCase("private")) {
+						if (token[0].trim().equalsIgnoreCase(Constants.KEYWORD_PRIVATE)) {
 							boolean flag = true;
 							for (int i = 1; i < token.length; i++) {
 								String dataType = token[i];
@@ -102,26 +105,31 @@ public class ParseBeanAction extends Action {
 								if (i < token.length - 1 && flag) {
 									if (token[i + 1].trim().endsWith("=")
 											|| token[i + 1].trim()
-													.endsWith(";")) {
+													.endsWith(";")
+											|| token[i + 1].trim().equals(
+													Constants.KEYWORD_FINAL)) {
 										int j = token[i + 1].trim()
 												.indexOf("=");
 										if (j == -1) {
 											j = token[i + 1].trim()
 													.indexOf(";");
 										}
-										variableName = token[i + 1].trim()
-												.substring(0, j);
+										if (j > -1)
+											variableName = token[i + 1].trim()
+													.substring(0, j);
 									} else {
 										variableName = token[i + 1].trim();
 									}
-									paramsMap.put(variableName, dataType);
+									if (!variableName.trim().equalsIgnoreCase(
+											"")){
+										paramsMap.put(variableName, dataType);
+									}
 									flag = false;
 								}
 							}
 						}
 					}
 				}
-
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -131,11 +139,12 @@ public class ParseBeanAction extends Action {
 	}
 
 	@Override
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("Inside execute method");
-		String fwd =processParseBean(mapping, form, request, response);
+		String fwd = processParseBean(mapping, form, request, response);
 		return mapping.findForward(fwd);
-		//return super.execute(mapping, form, request, response);
+		// return super.execute(mapping, form, request, response);
 	}
 }

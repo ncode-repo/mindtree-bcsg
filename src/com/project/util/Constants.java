@@ -8,4 +8,9 @@ public class Constants {
 	public static final String EVENT ="event";
 	public static final String TAG ="{tag}";
 	public static final String TEXT = "text";
+	public static final String TEXT_TAG = "textTag";
+	public static final String BUTTON_TAG ="buttonTag";
+	public static final String KEYWORD_PRIVATE ="private";
+	public static final String KEYWORD_FINAL ="final";
+	
 }

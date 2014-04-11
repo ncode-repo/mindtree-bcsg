@@ -78,10 +78,13 @@
  </script>  
 </head>
 <body>
-<html:form action="/JspWrite" method="post">
+<html:form action="/jspWrite" method="post">
 <table width="300" border="1">
- <% if(request.getAttribute("params")!=null){
-	 %>
+
+ <%
+ 	String attrib = null;
+ 		if (request.getAttribute("params") != null) {
+ %>
 
     <tr>
       <td><label>Multiple Selection </label>&nbsp;</td>
@@ -111,7 +114,16 @@
     <html:submit styleId="button1">Submit</html:submit>
   </div>
 
-   <%} %>
-   </html:form>
+		<%
+			} else if (request.getAttribute("jsp_write") != null) {
+					attrib = (String) request.getAttribute("jsp_write");
+					if (attrib != null && attrib.equalsIgnoreCase("false")) {
+		%>
+		<h2>Jsp Creation error. Please redo the steps</h2>
+		<%
+			}
+				}
+		%>
+	</html:form>
 </body>
 </html>

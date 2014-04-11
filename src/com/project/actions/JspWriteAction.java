@@ -13,9 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -28,17 +30,15 @@ public class JspWriteAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("Inside execute method");
-		JspWriteForm form1 = (JspWriteForm)form;
-		String fwd = processWrite(mapping, form1, request, response);
-		request.setAttribute("jsp_write", "true");
+		JspWriteForm jspForm = (JspWriteForm)form;
+		String fwd = processWrite(mapping, jspForm, request, response);
+		
 		return mapping.findForward(fwd);
 		//return super.execute(mapping, form, request, response);
 	}
 	
 	private String processWrite(ActionMapping mapping, JspWriteForm form, HttpServletRequest request, HttpServletResponse response) {
 		
-		System.out.println("Inside processWrite method");
 		String forward="success";
 		String jsp_name = "test.jsp";
 		HashMap<String,String> params_list = new HashMap<String, String>();
@@ -51,14 +51,25 @@ public class JspWriteAction extends Action {
 		for(int i= 0; i < captions.length; i++){
 			buttons_list.put(captions[i], events[i]);
 		    }
-		forward = writeToJsp(params_list,buttons_list, jsp_name,request);
-		
+		forward = writeToJsp(params_list,buttons_list, jsp_name,request,response);
+		if(forward.equalsIgnoreCase("success")){
+			request.setAttribute("jsp_write", "true");
+		}else if(forward.equalsIgnoreCase("error")){
+			request.setAttribute("jsp_write", "false");
+		}
 		return forward;
 	}
-	
+
+/**
+ * Write a jsp with input params and buttons	
+ * @param params
+ * @param buttons_map
+ * @param jsp_loc
+ * @param request
+ * @return
+ */
 	public String writeToJsp(HashMap<String, String> params,
-			HashMap<String, String> buttons_map, String jsp_loc,HttpServletRequest request) {
-		System.out.println("Inside writeToJsp method");
+			HashMap<String, String> buttons_map, String jsp_loc,HttpServletRequest request,HttpServletResponse response) {
 		String[] variableNames = params.keySet().toArray(new String[0]);
 		StringBuilder content = new StringBuilder();
 		BufferedReader br = null;
@@ -88,12 +99,12 @@ public class JspWriteAction extends Action {
 		for (String var : variableNames) {
 			html.append("<tr>");
 			html.append("<td>");html.append(var + ": ");html.append("</td>");
-			html.append("<td>");html.append(MessageFormat.format((String) prop.get("textTag"), var, var) + "\n");html.append("</td>");
+			html.append("<td>");html.append(MessageFormat.format((String) prop.get(Constants.TEXT_TAG), var, var) + "\n");html.append("</td>");
 			html.append("</tr><br>"+"\n");
 		}
 		html.append("</table>");
 		for(Map.Entry<String, String> entry: buttons_map.entrySet()){
-			html.append(MessageFormat.format((String) prop.get("buttonTag"), Constants.BUTTON+i, entry.getKey(),entry.getValue()) + "\n");
+			html.append(MessageFormat.format((String) prop.get(Constants.BUTTON_TAG), Constants.BUTTON+i, entry.getKey(),entry.getValue()) + "\n");
 			//html.append(MessageFormat.format((String) prop.get("eventTag"), Constants.EVENT+i, entry.getValue()) + "\n");
 			i++;
 		}
@@ -111,23 +122,36 @@ public class JspWriteAction extends Action {
 			try {
 				fw = new FileWriter(jsp.getAbsoluteFile());
 				bw = new BufferedWriter(fw);
+				//response.setContentLength( fileSize); 
+				//response.setContentType("application/x-download");
+				//response.setHeader("Content-disposition", "attachment; filename="
+				//+ jsp_loc);
+				/*response.setHeader("Cache-Control",
+				"max-age=" + TIMEOUT);*/
+				/*ServletOutputStream outStream = response.getOutputStream();
+				outStream.write(content.toString().getBytes());
+				outStream.flush();
+				outStream.close();*/
 				bw.write(content.toString());
 				bw.close();
-				System.out.println("Content is written to jsp");
 				forward = "success";
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}else{
-			System.out.println("Jsp cannot be written");
 			forward="error";
 		}
 		return forward;
 	}
 
+/**
+ * Load properties file	
+ * @param propFileName
+ * @return
+ * @throws IOException
+ */
 	private Properties getPropertiesFromClasspath(String propFileName)
 			throws IOException {
-		System.out.println("Inside getPropertiesFromClasspath method");
 		Properties props = new Properties();
 		InputStream inputStream = this.getClass().getClassLoader()
 				.getResourceAsStream(propFileName);
@@ -141,8 +165,13 @@ public class JspWriteAction extends Action {
 		return props;
 	}
 
+/**
+ * Create a jsp before writing	
+ * @param jspName
+ * @param request
+ * @return
+ */
 	public String createJspLocation(String jspName,HttpServletRequest request) {
-		System.out.println("Inside createJspLocation method");
 		boolean flag = false;
 		File jsp = null;
 		String web =request.getServletContext().getContextPath();
@@ -160,7 +189,7 @@ public class JspWriteAction extends Action {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("File " + jspName + " is already created");
+			System.out.println("File already created: "+ jspName);
 		}
 		return jsp.getPath();
 	}

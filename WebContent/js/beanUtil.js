@@ -1,9 +1,7 @@
 function validateForm() {
  	var x=document.getElementById("file").value;
 	if (x==null || x=="" || x.length == 0) {
-		//alert("Enter the file name");
-		$('.alertMsg').html("Enter the file name");
-		$.colorbox({inline:true, width: 'auto', height: '200px', href:"#alertDialog"});
+		alert("Enter the file name");
 		return false;
 	}
 	var ext = getFileExtension(x);

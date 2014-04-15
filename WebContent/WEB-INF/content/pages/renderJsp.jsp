@@ -9,50 +9,65 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>JSP tool</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
 	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="js/beanUtil.js"></script>
 </head>
 <body>
 	<html:form action="/jspWrite" method="post">
-		<table width="300" border="1">
+		<table width="70%" border="1px" class="tblClass">
  <%
  	String attrib = null;
  		if (request.getAttribute("params") != null) {
  %>
 	    	<tr>
-	      		<td>
+	      		<td width="30%">
 	      			<label>Multiple Selection </label>&nbsp;
 	      		</td>
-	      		<td>
+	      		<td width="35%">
 	      			<select id="select1" name="select1" size="8" multiple="multiple" tabindex="1">
 	      				<c:forEach items="${params}" var="current">   
 	          				<option value="${current.key}">${current.key}</option>
 	      				</c:forEach> 
 	      			</select>
 	      		</td>
-	      		<td>
+	      		<td width="35%">
 	      			<html:select property="values" multiple="true" size="8" styleId="select2" style="display:none"></html:select>  
 	      		</td>
 	    	</tr>
 	    	<tr>
 	      		<td>&nbsp;</td>
-	      		<td>
-	      			<input type="button" name="Submit" value="add" id="add" tabindex="2" onclick=""/>
+	      		<td class="padding10">
+	      			<input type="button" name="Submit" value="add" id="add" class="btn btn-primary" tabindex="2" onclick=""/>
 	      		</td>
-	 			<td>
-	 				<input type="button" id="remove" tabindex="2" value="remove" onclick="" />
+	 			<td class="padding10">
+	 				<input type="button" id="remove" tabindex="2" value="remove" class="btn btn-primary"  onclick="" />
 	 			</td>
 	    	</tr>
 		</table>
-  		<br /><br />
-  		<div id="buttons" style="display:none">
-			<input type="button" id="add_button" value="Add button" onclick="" />
-		  	<input type="button" id="rem_button" value="Remove button" onclick="" />
-  		</div>
-  		<br /><br />
-  		<div id='TextBoxesGroup' style="display:none">
-    		<html:submit styleId="button1">Submit</html:submit>
-  		</div>
+  		<table  width="70%" border="0px" class="tblBtnClass">
+  			<tr>
+  				<td>&nbsp;</td>
+	  		</tr>
+  			<tr>
+  				<td>
+			  		<div id="buttons">
+						<input type="button" id="add_button" value="Add button" class="btn btn-primary"  onclick="" />
+					  	<input type="button" id="rem_button" value="Remove button"  class="btn btn-primary"  onclick="" />
+			  		</div>
+	  			</td>
+	  		</tr>
+	  		<tr>
+  				<td>&nbsp;</td>
+	  		</tr>
+	  		<tr>
+	  			<td>
+			  		<div id='TextBoxesGroup'>
+			    		<html:submit styleId="button1" styleClass="btn btn-primary">Submit</html:submit>
+			  		</div>
+	  			</td>
+	  		</tr>
+  		</table>
 		<%
 			} else if (request.getAttribute("jsp_write") != null) {
 				attrib = (String) request.getAttribute("jsp_write");

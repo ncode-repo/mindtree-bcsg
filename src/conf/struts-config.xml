@@ -7,33 +7,12 @@
 <struts-config>
 	<!-- ================================================ Form Bean Definitions -->
     <form-beans>
-        <form-bean
-         name="ParseBeanForm"
-         type="com.project.forms.ParseBeanForm"/>
-         <form-bean
-         name="JspWriteForm"
-         type="com.project.forms.JspWriteForm"/>
+       
     </form-beans>
 	<!-- ============ Action Mapping Definitions -->
 	<action-mappings>
-		<action path="/welcome" forward="/WEB-INF/content/pages/uploadBean.jsp"></action>
-		<action
-		path="/parseBean"
-		type="com.project.actions.ParseBeanAction"
-		name="JspWriteForm"
-		scope="request">
-			<forward name="success" path="/WEB-INF/content/pages/renderJsp.jsp"/>
-	    	<forward name="error" path="/WEB-INF/content/pages/uploadBean.jsp"/>
-		</action>
-		<action
-		path="/jspWrite"
-		type="com.project.actions.JspWriteAction"
-		name="JspWriteForm"
-		scope="request">
-			<forward name="success" path="/WEB-INF/content/pages/uploadBean.jsp"/>
-	    	<forward name="error" path="/WEB-INF/content/pages/renderJsp.jsp"/>
-		</action>
-	</action-mappings>
+		<action path="/welcome" forward="/WEB-INF/content/pages/index.jsp"></action>
+		</action-mappings>
 	<message-resources
 		parameter="ApplicationResources" null="false"/>
 </struts-config>

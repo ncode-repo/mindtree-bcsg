@@ -76,3 +76,6 @@ input, textarea, select {
     border-color: #285E8E;
     color: #FFFFFF;
 }
+#errMsg {
+	color:#F00;
+}

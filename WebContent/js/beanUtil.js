@@ -1,12 +1,14 @@
 function validateForm() {
  	var x=document.getElementById("uploadBtn").value;
 	if (x==null || x=="" || x.length == 0) {
-		alert("Enter the file name");
+		$('#errMsg').html("Enter the file name");
+		$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
 		return false;
 	}
 	var ext = getFileExtension(x);
 	if(ext!="java") {
-		alert("Invalid File Format. Please upload a java file.");
+		$('#errMsg').html("Invalid File Format. Please upload a java file.");
+		$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
 		return false;
 	}
 	return true;
@@ -18,8 +20,10 @@ function getFileExtension(name) {
 }
 
 function msg(flag){
-	if(flag=="true")
-		alert("Jsp was created and written successfully");
+	if(flag=="true") {
+		$('#errMsg').html("Jsp was created and written successfully");
+		$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
+	}
 	else
 		return true;
 }
@@ -46,7 +50,8 @@ $(document).ready(function () {
 
 	$('#add_button').click(function() { 
 		if(counter>10){
-			alert("Only 10 textboxes allow");
+			$('#errMsg').html("Only 10 textboxes allow");
+			$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
 			return false;
 		}   
 		var newTextBoxDiv =  $(document.createElement('div')).attr("id", 'TextBoxDiv' + counter);
@@ -62,7 +67,8 @@ $(document).ready(function () {
 		
 	$('#rem_button').click(function() { 
 		if(counter==0){
-	  		alert("No more textbox to remove");
+	  		$('#errMsg').html("No more textbox to remove");
+			$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
 	  		return false;
 		}   
 		counter--;	 
@@ -71,12 +77,14 @@ $(document).ready(function () {
 		
 	$('#button1').click(function(){
 		if(counter==0){
-			alert("Add some buttons");
+			$('#errMsg').html("Add some buttons");
+			$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
 	  		return false;
 		}
 		for ( var i = 1; i <= counter; i++ ) {
 			if($('#caption'+i).val()==""||$('#value'+i).val()==""){
-				alert("please enter button captions and events");
+				$('#errMsg').html("please enter button captions and events");
+				$.colorbox({inline:true, width: '500px', height: '200px', href:"#beanAltMsg"});
 				return false;
 			}
 		}

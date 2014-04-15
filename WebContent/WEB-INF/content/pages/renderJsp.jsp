@@ -10,7 +10,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>JSP tool</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" type="text/css" href="css/modal.style.css" />
 	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="js/colorbox/jquery.colorbox.js"></script>
 	<script type="text/javascript" src="js/beanUtil.js"></script>
 </head>
 <body>
@@ -79,5 +81,14 @@
 				}
 		%>
 	</html:form>
+	<div style='display:none'>
+			<div class="modal-wrapper" id='beanAltMsg'>
+        		<h2>Error Message</h2>
+       			<div class="content">
+		            <h3 id="errMsg">
+		            </h3>
+       			</div>
+    		</div>
+		</div>
 </body>
 </html>

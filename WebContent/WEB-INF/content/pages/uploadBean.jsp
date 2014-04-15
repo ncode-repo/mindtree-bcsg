@@ -13,7 +13,9 @@
 	<title>Upload Bean</title>
 	<meta content="text/html; charset=us-ascii" http-equiv="Content-Type">
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" type="text/css" href="css/modal.style.css" />
 	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="js/colorbox/jquery.colorbox.js"></script>
 	<script type="text/javascript" src="js/beanUtil.js"></script>
 </head>
 <% String attrib = null;
@@ -63,6 +65,16 @@
 				</table>
 			</html:form>
 		</div>
+		<div style='display:none'>
+			<div class="modal-wrapper" id='beanAltMsg'>
+        		<h2>Error Message</h2>
+       			<div class="content">
+		            <h3 id="errMsg">
+		            </h3>
+       			</div>
+    		</div>
+		</div>
+	    
 	</div>
 </body>
 </html>

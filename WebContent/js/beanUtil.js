@@ -1,5 +1,5 @@
 function validateForm() {
- 	var x=document.getElementById("file").value;
+ 	var x=document.getElementById("uploadBtn").value;
 	if (x==null || x=="" || x.length == 0) {
 		alert("Enter the file name");
 		return false;

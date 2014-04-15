@@ -35,7 +35,7 @@
 			</logic:messagesPresent>
 		</div>
 		<div class="box6">
-			<html:form action="/parseBean" method="post"
+			<html:form action="/parseBean"  onsubmit="return validateForm()"  method="post"
 				enctype="multipart/form-data">
 				<table>
 					<tr>
@@ -50,7 +50,7 @@
 								<input id="uploadFile" placeholder="Choose File" disabled="disabled" />
 							</p>
 							<div class="fileUpload btn btn-primary">
-							    <span>Upload</span>
+							    <span>Upload Form Bean</span>
 							    <html:file property="javaBean" styleClass="upload" styleId="uploadBtn"/>
 							</div>
 							<p style="display:inline;">		

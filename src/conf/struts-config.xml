@@ -7,11 +7,14 @@
 <struts-config>
 	<!-- ================================================ Form Bean Definitions -->
     <form-beans>
-       
+       <form-bean name="logform" type="com.project.form.LoggerForm"></form-bean>
     </form-beans>
 	<!-- ============ Action Mapping Definitions -->
 	<action-mappings>
-		<action path="/welcome" forward="/WEB-INF/content/pages/index.jsp"></action>
+		<action path="/welcome" forward="/WEB-INF/content/pages/logger.jsp"></action>
+		<action path="/logs" type="com.project.action.LoggerAction" name="logform">
+		<forward name="/success" path="/WEB-INF/content/pages/success.jsp"></forward>
+		</action>
 		</action-mappings>
 	<message-resources
 		parameter="ApplicationResources" null="false"/>

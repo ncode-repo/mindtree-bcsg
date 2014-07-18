@@ -3,24 +3,32 @@ package com.project.form;
 import org.apache.struts.action.ActionForm;
 
 public class LoggerForm extends ActionForm{
-	String fromString="";
-	String toString="";
+	String fromDate="";
+	String toDate="";
+	String findString="";
 	String host="";
 	String userName="";
 	String password="";
 	
 	
-	public String getFromString() {
-		return fromString;
+
+	public String getFromDate() {
+		return fromDate;
 	}
-	public void setFromString(String fromString) {
-		this.fromString = fromString;
+	public void setFromDate(String fromSDate) {
+		this.fromDate = fromSDate;
 	}
-	public String getToString() {
-		return toString;
+	public String getToDate() {
+		return toDate;
 	}
-	public void setToString(String toString) {
-		this.toString = toString;
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+	public String getFindString() {
+		return findString;
+	}
+	public void setFindString(String findString) {
+		this.findString = findString;
 	}
 	public String getHost() {
 		return host;

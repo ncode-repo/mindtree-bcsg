@@ -11,8 +11,10 @@
     </form-beans>
 	<!-- ============ Action Mapping Definitions -->
 	<action-mappings>
+		<action path="/envDetails" forward="/WEB-INF/content/pages/envSetupDetails.jsp"></action>
+		<action path="/envSetup" forward="/WEB-INF/content/pages/envSetup.jsp"></action>
 		<action path="/welcome" forward="/WEB-INF/content/pages/logger.jsp"></action>
-		<action path="/logs" type="com.project.action.LoggerAction" name="logform">
+		<action path="/logs" type="com.project.action.LoggerAction" name="logform" validate="false" input="/WEB-INF/content/pages/logger.jsp">
 		<forward name="/success" path="/WEB-INF/content/pages/success.jsp"></forward>
 		</action>
 		</action-mappings>

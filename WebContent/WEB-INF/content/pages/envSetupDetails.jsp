@@ -6,21 +6,26 @@
 <html>
 <head>
 </head>
-<%-- <jsp:useBean id="data" class="com.project.form.LoggerForm" scope="session"/>
-<jsp:setProperty name="data" property="*"/>  --%>
 <%
-String envSetup=request.getParameter("envSetup"); 
-/* session.setAttribute("env", request.getParameter("envSetup"));
-LoggerForm form= new LoggerForm();
-form.setEnvSetUp(request.getParameter("envSetup")); */
+	String envSetup = request.getParameter("envSetup");
+	session.setAttribute("env", request.getParameter("envSetup"));
+	request.getSession(true);
+	//request.setAttribute("env", request.getParameter("envSetup"));
+	//out.println("request"+request.getAttribute("env"));
 %>
 
 <body>
-<form action="logs.do">
+	<form action="welcome.do">
 		<h1 align="center">Finding Logs</h1>
-		<div align="center">
-		selected env is <%=envSetup %>
+		<%-- <div align="center">
+			selected env is
+			<%=envSetup%> --%>
 			<table align="center" cellpadding="15" cellspacing="2" border="5">
+			<tr>
+					<td>Environment Name :</td>
+					<td><input type="text" name="envSetUp" tabindex="1" size="30" />
+						<br></td>
+				</tr>
 				<tr>
 					<td>Host Name :</td>
 					<td><input type="text" name="hostName" tabindex="1" size="30" />
@@ -28,7 +33,8 @@ form.setEnvSetUp(request.getParameter("envSetup")); */
 				</tr>
 				<tr>
 					<td>Port No :</td>
-					<td><input type="text" name="portNo" tabindex="1" size="30" /> <br></td>
+					<td><input type="text" name="portNo" tabindex="1" size="30" />
+						<br></td>
 				</tr>
 				<tr align="center">
 					<td colspan="5">User Credentials</td>
@@ -40,20 +46,19 @@ form.setEnvSetUp(request.getParameter("envSetup")); */
 				</tr>
 				<tr>
 					<td>password :</td>
-					<td><input type="text" name="password" tabindex="1" size="30" />
+					<td><input type="password" name="password" tabindex="1" size="30" />
 						<br></td>
 				</tr>
 				<tr>
 					<td>private Key File :</td>
-					<td><input type="file" name="fileName"> 
-						<br></td>
+					<td><input type="file" name="fileName"> <br></td>
 				</tr>
 				<tr align="center">
-			<td colspan="5"><input type="submit" name="submit"
-				value="Save Details" /></td>
-		</tr>
+					<td colspan="5"><input type="submit" name="submit"
+						value="Save Details" /></td>
+				</tr>
 			</table>
 		</div>
-		</form>
+	</form>
 </body>
 </html>

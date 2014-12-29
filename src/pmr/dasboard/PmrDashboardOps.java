@@ -6,7 +6,6 @@ import java.util.List;
 
 import jira.JiraData;
 import ole.DashboardExcel;
-import pmr.beans.DevDataBean;
 import util.ConfigManager;
 import util.Constant;
 import util.DateTimeUtil;
@@ -33,36 +32,26 @@ public class PmrDashboardOps {
 			List<String> prjList = Arrays.asList(cm.getProperty(Constant.PROJECT_NAMES).split(","));
 
 			for (String prj : prjList) {
-				// List<DevDataBean> lstDevDataBean = new
-				// ArrayList<DevDataBean>();
 				// 2 retrive data from jira
-				// // for cr's
 				System.out.println("Retriving data from JIRA for..." + prj);
-				// DevDataBean devDataBeanForCR = jd.getReleaseWiseData(jc, prj,
-				// Constant.RELEASE_VERSION);
 				jd.setJc(jc);
 				jd.setProjectName(prj);
-				List<List<String>> lstData = new ArrayList<List<String>>();
+				List<List<?>> lstData = new ArrayList<List<?>>();
 				lstData.add(jd.getReleaseWiseData(jd.getFixVersion(prj)));
 				lstData.add(jd.getMonthWiseData());
-				// // for bugs
-				// System.out.println("...for..." + Constant.TICKET_TYPE_BUG);
-				// DevDataBean devDataBeanForBug = jd.getReleaseWiseData(jc,
-				// prj, Constant.TICKET_TYPE_BUG);
+				lstData.add(jd.getPriorityWiseData());
+				
+				// 3 create xls and fill data in it
+				System.out.println("Writing dashboard excel...");
+				String fileName = createFileName(prj);
+				new DashboardExcel().writeDataInExcel(fileName, lstData);
 
-//				String fileName = createFileName(prj);
-//				// 3 create xls and fill data in it
-//				System.out.println("Writing dashboard excel...");
-//				// lstDevDataBean.add(devDataBeanForCR);
-//				// lstDevDataBean.add(devDataBeanForBug);
-//				// new ExportToXls().writeDataInExcel(fileName, lstDevDataBean);
-//				new DashboardExcel().writeDataInExcel(fileName, lstData);
-//				// 4 send mail
-//				System.out.println("Sending mail...");
-//				new Mailing().sendMail(fileName, prj);
+				// 4 send mail
+				System.out.println("Sending mail...");
+				new Mailing().sendMail(fileName, prj);
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			jd = null;
 			jc = null;
@@ -80,7 +69,6 @@ public class PmrDashboardOps {
 
 	public static void main(String[] args) {
 		PmrDashboardOps pmrDashboardOps = new PmrDashboardOps();
-		// System.out.println(pmrDashboardOps.createFileName("MBW"));
 		pmrDashboardOps.createDevDashboard();
 	}
 }

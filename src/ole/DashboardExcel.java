@@ -1,16 +1,16 @@
 package ole;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,8 +26,11 @@ public class DashboardExcel {
 	static XSSFWorkbook workbook;
 	static Sheet sh;
 
+	//Row numbers for header
 	Integer count_RELEASE_HEADER = 0;
 	Integer count_MONTH_HEADER = 5;
+	Integer count_PRIORITY_HEADER = 10;
+	//
 
 	/**
 	 * This method demonstrates how to Auto resize Excel column
@@ -85,71 +88,6 @@ public class DashboardExcel {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-/*
-		wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows
-										// will be flushed to disk
-		sh = wb.createSheet("Sample sheet");
-
-		CellStyle headerStle = getHeaderStyle();
-		CellStyle normalStyle = getNormalStyle();
-
-		for (int rownum = 0; rownum < 1000; rownum++) {
-			Row row = sh.createRow(rownum);
-			for (int cellnum = 0; cellnum < 10; cellnum++) {
-
-				Cell cell = row.createCell(cellnum);
-				String address = new CellReference(cell).formatAsString();
-				cell.setCellValue(address);
-
-				if (rownum == 0) {
-
-					cell.setCellStyle(headerStle);
-				} else {
-					cell.setCellStyle(normalStyle);
-				}
-			}
-
-		}
-
-		// Below code Shows how to merge Cell
-		sh.addMergedRegion(new CellRangeAddress(0, // first row (0-based)
-				0, // last row (0-based)
-				0, // first column (0-based)
-				5 // last column (0-based)
-		));
-
-		autoResizeColumns();
-
-		/**
-		 * To Auto-resize Row, We have to follow two steps 1. Set WordWrap
-		 * property in CellStyle to true 2. Set setHeightInPoints of row likw
-		 * this : row.setHeightInPoints((totalHtmlLineBreak *
-		 * sh.getDefaultRowHeightInPoints())); Where totalHtmlLineBreak is total
-		 * lines for auto height
-		 *
-
-		File f = new File("c:/DeleteThis/2/Example2.xlsx");
-
-		if (!f.exists()) {
-			// If directories are not available then create it
-			File parent_directory = f.getParentFile();
-			if (null != parent_directory) {
-				parent_directory.mkdirs();
-			}
-
-			f.createNewFile();
-		}
-
-		FileOutputStream out = new FileOutputStream(f, false);
-		wb.write(out);
-		out.close();
-
-		// dispose of temporary files backing this workbook on disk
-		wb.dispose();
-		System.out.println("File is created");
-		// Launch Excel File Created
-		Desktop.getDesktop().open(f);
-		*/
 		new DashboardExcel().writeDataInExcel("Me.xls",null);
 	}
 
@@ -162,7 +100,19 @@ public class DashboardExcel {
 		createHeader(count_MONTH_HEADER, cm.getProperty(Constant.HEADER_MONTH), cm.getProperty(Constant.HEADER_MONTHLY_DATA).split(","));
 		count_MONTH_HEADER++;
 	}
-
+	
+	private void createPriorityDataHeader() {
+		createHeader(count_PRIORITY_HEADER, cm.getProperty(Constant.HEADER_PRIORITY), cm.getProperty(Constant.HEADER_PRIORITY_DATA).split(","));
+		count_PRIORITY_HEADER++;
+	}
+	
+	/**
+	 * This method is used create Header
+	 *  @param Header Row no
+	 *  @param Header data
+	 *  @param array of sub headers
+	 * 
+	 */
 	private void createHeader(Integer count, String type, String[] header) {
 		// Heading
 		CellStyle headerStyle = getHeaderStyle();
@@ -180,8 +130,14 @@ public class DashboardExcel {
 			cell.setCellStyle(headerStyle);
 		}
 	}
-
-	private void fillData(Row row, List<String> lstData) {
+	
+	/**
+	 * This method will fill Release wise and Month wise data from specified Row
+	 *  @param row
+	 *  @param List
+	 * 
+	 */
+	private void fillData(Row row, List<?> lstData) {
 		CellStyle normalStyle = getNormalStyle();
 		for (int cellnum = 0; cellnum < lstData.size(); cellnum++) {
 			Cell cell = row.createCell(cellnum);
@@ -189,8 +145,53 @@ public class DashboardExcel {
 			cell.setCellStyle(normalStyle);
 		}
 	}
-
-	public void writeDataInExcel(String fileName, List<List<String>> lstData) {
+	
+	/**
+	 * This method will fill priority wise data from specified Row
+	 * @param row
+	 * @param List<Map>
+	 * 
+	 */
+	private void fillPriorityData(Row row, List<Map<String, Integer>> lstData) {
+		CellStyle normalStyle = getNormalStyle();
+		//This is for to print 1st col i.e. Priority type {P1,P2,P3,Other}
+		final String priortyArr[]={"P1","P2","P3","Other","Total"};
+		try{
+			for (int rownum = count_PRIORITY_HEADER, i = 0; rownum <=count_PRIORITY_HEADER
+					+ lstData.get(0).size(); rownum++, i++) {
+				Cell cell = row.createCell(0);
+				cell.setCellValue(priortyArr[i]);
+				cell.setCellStyle(normalStyle);
+				row = sh.createRow(rownum + 1);
+			}
+			//This will be for -{Raised, Closed, Re-opened} vals
+			//used to iterate data column wise
+			for(int colnum = 1;colnum<=lstData.size();colnum++){
+				int count =0;
+				Map<String, Integer> map = lstData.get(colnum-1);
+				//fill data column wise
+				for (int rownum = count_PRIORITY_HEADER,i=0; rownum <=count_PRIORITY_HEADER+lstData.get(0).size(); rownum++,i++) {
+					row = sh.getRow(rownum);
+					Cell cell = row.createCell(colnum);
+					//set data in cell and calculating total
+					if(i<priortyArr.length-1){
+						cell.setCellValue(map.get(priortyArr[i].toLowerCase()));
+						count+=map.get(priortyArr[i].toLowerCase());
+					}
+					cell.setCellStyle(normalStyle);
+				}
+				row = sh.getRow(count_PRIORITY_HEADER+count_PRIORITY_HEADER+lstData.get(0).size());
+				Cell cell = row.createCell(colnum);
+				// set Total count data in cell 
+				cell.setCellValue(count);
+				cell.setCellStyle(normalStyle);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeDataInExcel(String fileName, List<List<?>> lstData) {
 		wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows
 		// will be flushed to disk
 		sh = wb.createSheet("Dashboard data");
@@ -207,7 +208,15 @@ public class DashboardExcel {
 		if (lstData != null) {
 			fillData(row, lstData.get(1));
 		}
-
+		// Priority wise Month data
+		createPriorityDataHeader();
+		row = sh.createRow(++count_PRIORITY_HEADER);
+		if(lstData!=null){
+			List<Map<String, Integer>> mapData = new ArrayList<Map<String, Integer>>();
+			mapData=(List<Map<String, Integer>>) lstData.get(2);
+			fillPriorityData(row, mapData);
+		}
+		
 		autoResizeColumns();
 
 		File f = getFile(fileName);
@@ -229,11 +238,6 @@ public class DashboardExcel {
 	private File getFile(String fileName) {
 		File f = new File(fileName);
 		if (!f.exists()) {
-			// If directories are not available then create it
-			// File parent_directory = f.getParentFile();
-			// if (null != parent_directory) {
-			// parent_directory.mkdirs();
-			// }
 			try {
 				f.createNewFile();
 			} catch (IOException e) {

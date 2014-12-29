@@ -2,7 +2,6 @@ package pmr.beans;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DevDataBean {
 	private String projectName;
@@ -13,12 +12,6 @@ public class DevDataBean {
 	private double totalEstimatedEfforts;
 	private double totalActualEfforts;
 	private double totalSize;
-	private String createdOn;
-	private String releaseName;
-	
-	private Map<String,List<Map<String,String>>> updatedDetails;
-	private Map<String,List<Map<String,String>>> devReleaseWiseData;
-	private Map<String,List<Map<String,String>>> devMonthWiseData;
 	
 	public String getProjectName() {
 		return projectName;

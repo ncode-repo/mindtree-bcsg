@@ -17,7 +17,7 @@ public class Constant {
 	
 	public static String STATUS_REOPENED= "STATUS_REOPENED";
 	public static String STATUS_DEV_OPEN= "STATUS_DEV_OPEN";
-	//public static String STATUS_CLOSED= "STATUS_CLOSED";
+	public static String STATUS_CLOSED= "STATUS_CLOSED";
 	public static String STATUS_BUILD_UPDATED= "STATUS_BUILD_UPDATED";
 	public static String STATUS_INVALID= "STATUS_INVALID";
 	
@@ -35,6 +35,8 @@ public class Constant {
 	public static String HEADER_MONTH ="HEADER_MONTH";
 	public static String HEADER_RELEASE_DATA = "HEADER_RELEASE_DATA";
 	public static String HEADER_MONTHLY_DATA ="HEADER_MONTHLY_DATA";
+	public static String HEADER_PRIORITY ="HEADER_PRIORITY";
+	public static String HEADER_PRIORITY_DATA ="HEADER_PRIORITY_DATA";
 
 	// This is for testing only,
 	// default val="", for testing provide date in format- yyyy-mm-dd
@@ -63,5 +65,10 @@ public class Constant {
 	public static String PM_MAILID="PM_MAILID";
 	//Scheduler Realted
 	public static String DASHBOARD_CRON_JOB_EXPRESSION="DASHBOARD_CRON_JOB_EXPRESSION";
+	//priority
+	public final static String PRIORITY_URGENT="urgent";
+	public final static String PRIORITY_HIGH="high";
+	public final static String PRIORITY_MEDIUM="medium";
+	public final static String PRIORITY_LOW="low";
 	
 }

@@ -28,6 +28,7 @@ public class JiraData {
 	static DateTimeUtil dateTimeUtil = new DateTimeUtil();
 	JiraRestClient jc = null;
 	String projectName=null;
+	int count = 0;
 	
 	public void setJc(JiraRestClient jc) {
 		this.jc = jc;
@@ -38,6 +39,15 @@ public class JiraData {
 	// TODO:
 	// 1. use uname pwd from prop file
 	// 2. handle exception properly
+	
+	/**
+	 * This method will return JiraRestClient (used to connect with jira)
+	 * 
+	 * @param uri
+	 * @param userName
+	 * @param password
+	 * @return JiraRestClient
+	 */
 	public JiraRestClient connectToJIRA() {
 		try {
 			jc = new AsynchronousJiraRestClientFactory().createWithBasicHttpAuthentication(new URI("https://bcsgsvn.atlassian.net/"), "nilesh",
@@ -49,11 +59,15 @@ public class JiraData {
 		}
 		return jc;
 	}
-
+	
+	/**
+	 * This method will return total Reopen tickets count
+	 * @param all_reopen_ids
+	 * @return reopen_count
+	 */
 	private int getReopenTicketsCount(StringBuilder all_reopen_ids) {
 		int reopen_count = 0;
 		String jsql_releaseSpec = "project = " + projectName + " AND status WAS " + cm.getProperty(Constant.STATUS_REOPENED) + " AND issueKey IN " + all_reopen_ids;
-//		System.out.println("jSql: " + jsql_releaseSpec);
 		try {
 			Promise<SearchResult> r = jc.getSearchClient().searchJql(jsql_releaseSpec);
 			reopen_count = r.claim().getTotal();
@@ -62,15 +76,24 @@ public class JiraData {
 		}
 		return reopen_count;
 	}
-
+	
+	/**
+	 * This method will return jql for release version
+	 * @param releaseVersion
+	 * @return jql
+	 */
 	private String getReleaseWiseJQL(String releaseVersion) {
 		String assignee_condi =getJIRA_MT_list();
 		String jsql_releaseSpec = "project = " + projectName + " AND assignee was in (" + assignee_condi + ") AND fixVersion IN(" + releaseVersion
 				+ ")";
-//		System.out.println("jSql: " + jsql_releaseSpec);
-//		System.out.println();
 		return jsql_releaseSpec;
 	}
+	
+	/**
+	 * This method will return month wise jql
+	 * @param boolean (false for cr, true for bug )
+	 * @return jql
+	 */
 	private String getMonthWiseJQL(boolean isForBug) {
 		String strStartDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getDashboardMonth_StartDate_yyyymmdd()
 				: cm.getProperty(Constant.TEST_DASHBOARD_START_DATE));
@@ -83,6 +106,12 @@ public class JiraData {
 		System.out.println("jSql: " + jsql_releaseSpec);
 		return jsql_releaseSpec;
 	}
+	
+	/**
+	 * This method will return release version of project
+	 * @param projectName
+	 * @return version
+	 */
 	public String getFixVersion(String projectName){
 		String version= null;//Arrays.toString(cm.getProperty(Constant.RELEASE_VERSIONS).contains(projectName);
 		
@@ -93,9 +122,14 @@ public class JiraData {
 				break;
 			}
 		}
-//		System.out.println(version);
 		return version;
 	}
+	
+	/**
+	 * This method will return list of release wise data
+	 * @param releaseVersion
+	 * @return list
+	 */
 	public List<String> getReleaseWiseData(String releaseVersion) {
 		List<String> devDataList= new ArrayList<String>();
 		
@@ -111,7 +145,7 @@ public class JiraData {
 		Double totalDevActualEfforts_Bug = 0.0;
 		Double totalQaEstimatedEfforts_Bug = 0.0;
 		Double totalQaActualEfforts_Bug = 0.0;
-
+		//get jql for release wise
 		String jsql_releaseSpec = getReleaseWiseJQL(releaseVersion);
 
 		try {
@@ -126,7 +160,7 @@ public class JiraData {
 				Worklog wl = null;
 				String author = null;
 				String issueType = issue.getIssueType().getName();
-//				System.out.println("issueType:" + issueType);
+				// checking for CR 
 				if (cm.getProperty(Constant.TICKET_TYPE_CR).contains(issueType)) {
 					// CR count
 					totalTicketCount_CR++;
@@ -154,8 +188,8 @@ public class JiraData {
 							totalQaActualEfforts_CR = totalQaActualEfforts_CR +  wl.getMinutesSpent();
 						}// //
 					}
-				} else if (cm.getProperty(Constant.TICKET_TYPE_BUG).contains(issueType)) {
-					// CR count
+				} else if (cm.getProperty(Constant.TICKET_TYPE_BUG).contains(issueType)) { //checking for Bugs
+					// BUG count
 					totalTicketCount_Bug++;
 					// For Reopen count
 					chksFor_Bug_reopened = chksFor_Bug_reopened.append(issue.getKey() + ",");
@@ -165,6 +199,7 @@ public class JiraData {
 						author = wl.getUpdateAuthor().getName();
 						// Efforts calc
 						tt = issue.getTimeTracking();
+						//checking for particular Dev and calculating efforts
 						if (getJIRA_DEV_list().contains(author)) {
 //							totalDevEstimatedEfforts_Bug = totalDevEstimatedEfforts_Bug
 //									+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
@@ -172,7 +207,7 @@ public class JiraData {
 //							totalDevActualEfforts_Bug = totalDevActualEfforts_Bug + tt.getTimeSpentMinutes();
 							totalDevEstimatedEfforts_Bug = totalDevEstimatedEfforts_Bug +  wl.getMinutesSpent();
 							totalDevActualEfforts_Bug = totalDevActualEfforts_Bug +  wl.getMinutesSpent();
-						} else if (getJIRA_QA_list().contains(author)) {
+						} else if (getJIRA_QA_list().contains(author)) { //checking for particular QA and calculating efforts
 //							totalQaEstimatedEfforts_Bug = totalQaEstimatedEfforts_Bug
 //									+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //									+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
@@ -232,10 +267,6 @@ public class JiraData {
 	/**
 	 * return no. of open tickets till this month plus no. of tickets raised in
 	 * this month
-	 * 
-	 * @param jc
-	 * @param projectName
-	 * @param all_reopen_ids
 	 * @return
 	 */
 	private int getOpenTicketsCountForMonthWise(boolean isForBug) {
@@ -350,6 +381,7 @@ public class JiraData {
 			TimeTracking tt = null;
 			while (it.hasNext()) {
 				Issue issue = jc.getIssueClient().getIssue(((BasicIssue) it.next()).getKey()).claim();
+
 				// Efforts
 				Iterator<Worklog> itrWL = issue.getWorklogs().iterator();
 				Worklog wl = null;
@@ -410,7 +442,98 @@ public class JiraData {
 		return lstEffortsData;
 	}
 	
+	private int getPriorityWiseCount(String priority,String status) {
+		int priority_count=0;
+		String strStartDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getDashboardMonth_StartDate_yyyymmdd()
+				: cm.getProperty(Constant.TEST_DASHBOARD_START_DATE));
+		String strEndDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getPrevMonth_EndDate_yyyymmdd()
+				: cm.getProperty(Constant.TEST_DASHBOARD_END_DATE));
+		
+		String createdDate_condi= " AND created>="+ strStartDate + " AND created <= " + strEndDate;
+		String priority_condi=" AND priority="+priority;
+		String status_condi = (status!=null?" AND status in("+status+")":"");
+		String assignee_condi =" AND assignee was in (" + getJIRA_MT_list() + ")";
+		
+		String jsql_FindPriority = "project = " + projectName +createdDate_condi+priority_condi+status_condi+assignee_condi;
+		System.out.println("jSql: " + jsql_FindPriority);
+		
+		Promise<SearchResult> r =null;
+		try {
+			r = jc.getSearchClient().searchJql(jsql_FindPriority);
+			priority_count = r.claim().getTotal();
+		} catch (Exception e) {
+			System.out.println("Exception in getPriorityWiseCount(): " + e.getMessage());
+		}
+		return priority_count;
+	}
+	private Map<String, Integer> getPrioritydataForRaised(){
+		Map<String, Integer> map=new HashMap<String,Integer >();
+		int count=0;
+		count=getPriorityWiseCount("Urgent",null);
+		System.out.println("P1-Urgent: "+count);
+		map.put("p1",count);
+		count=getPriorityWiseCount("High",null);
+		System.out.println("P2-High: "+count);
+		map.put("p2",count);
+		count=getPriorityWiseCount("Medium",null);
+		System.out.println("P3-Medium: "+count);
+		map.put("p3",count);
+		count=getPriorityWiseCount("Low",null);
+		System.out.println("Other-Low: "+count);
+		map.put("other",count);
+		return map;
+	}
+	
+	private Map<String, Integer> getPrioritydataForRaisedForClosed(){
+		Map<String,Integer> map=new HashMap<String,Integer>();
+		int count=0;
+		count=getPriorityWiseCount("Urgent",cm.getProperty(Constant.STATUS_CLOSED));
+		System.out.println("P1-Urgent: "+count);
+		map.put("p1",count);
+		count=getPriorityWiseCount("High",cm.getProperty(Constant.STATUS_CLOSED));
+		System.out.println("P2-High: "+count);
+		map.put("p2",count);
+		count=getPriorityWiseCount("Medium",cm.getProperty(Constant.STATUS_CLOSED));
+		System.out.println("P3-Medium: "+count);
+		map.put("p3",count);
+		count=getPriorityWiseCount("Low",cm.getProperty(Constant.STATUS_CLOSED));
+		System.out.println("Other-Low: "+count);
+		map.put("other",count);
+		return map;
+	}
+	
+	private Map<String, Integer> getPrioritydataForRaisedForReOpened(){
+		Map<String, Integer> map=new HashMap<String, Integer>();
+		int count=0;
+		count=getPriorityWiseCount("Urgent","Reopened");
+		System.out.println("P1-Urgent: "+count);
+		map.put("p1",count);
+		count=getPriorityWiseCount("High","Reopened");
+		System.out.println("P2-High: "+count);
+		map.put("p2",count);
+		count=getPriorityWiseCount("Medium","Reopened");
+		System.out.println("P3-Medium: "+count);
+		map.put("p3",count);
+		count=getPriorityWiseCount("Low","Reopened");
+		System.out.println("Other-Low: "+count);
+		map.put("other",count);
+		return map;
+	}
+	
+	public List<Map<String, Integer>> getPriorityWiseData(){
+		
+		List<Map<String, Integer>> lstPriorityData=new ArrayList<Map<String, Integer>>();
+		lstPriorityData.add(getPrioritydataForRaised());
+		lstPriorityData.add(getPrioritydataForRaisedForClosed());
+		lstPriorityData.add(getPrioritydataForRaisedForReOpened());
+		
+		System.out.println("total tickets :: "+ lstPriorityData.get(0));
+		System.out.println("closed tickets :: "+ lstPriorityData.get(1));
+		System.out.println("reopened tickets :: "+ lstPriorityData.get(2));
+		return lstPriorityData;
+	}
 	public List<String> getMonthWiseData() {
+		
 		List<String> devDataList= new ArrayList<String>();
 		try {
 			List<Map> lstDevData=null;
@@ -424,7 +547,7 @@ public class JiraData {
 			//Filing Month wise data
 			devDataList.add(String.valueOf(DateTimeUtil.getDashboard_MonthYear()));
 			devDataList.add(String.valueOf(getOpenTicketsCountForMonthWise( false)));
-			devDataList.add(String.valueOf(getCloseTicketsCountForMonthWise( true)));
+			devDataList.add(String.valueOf(getCloseTicketsCountForMonthWise( true))); 
 			devDataList.add(String.valueOf(mapEfforts_CR.get("TOTAL_QA_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT))));
 			devDataList.add(String.valueOf(mapEfforts_CR.get("TOTAL_DEV_ACTUAL_EFFORTS") / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT))));
 			devDataList.add(String.valueOf(getOpenTicketsCountForMonthWise(true)));

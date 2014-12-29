@@ -9,9 +9,8 @@ public class DateTimeUtil {
 	
 	public static String getDashboard_MonthYear() {
 		String str_month_year=null;
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.cm.getProperty(Constant.JIRA_DATE_FORMAT));
-		String strDate = sdf.format(date);
+		String strDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getPrevMonth_EndDate_yyyymmdd()
+				: cm.getProperty(Constant.TEST_DASHBOARD_END_DATE));
 		str_month_year=strDate.substring(0,strDate.lastIndexOf("-"));
 		return str_month_year;
 	}

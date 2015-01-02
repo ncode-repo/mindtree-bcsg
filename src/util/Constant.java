@@ -66,9 +66,8 @@ public class Constant {
 	//Scheduler Realted
 	public static String DASHBOARD_CRON_JOB_EXPRESSION="DASHBOARD_CRON_JOB_EXPRESSION";
 	//priority
-	public final static String PRIORITY_URGENT="urgent";
-	public final static String PRIORITY_HIGH="high";
-	public final static String PRIORITY_MEDIUM="medium";
-	public final static String PRIORITY_LOW="low";
+	public final static String URI="URI";
+	public final static String USER_NAME="USER_NAME";
+	public final static String PASSWORD="PASSWORD";
 	
 }

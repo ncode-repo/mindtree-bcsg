@@ -149,7 +149,7 @@ public class DashboardExcel {
 	/**
 	 * This method will fill priority wise data from specified Row
 	 * @param row
-	 * @param List<Map>
+	 * @param List<Map>lstData
 	 * 
 	 */
 	private void fillPriorityData(Row row, List<Map<String, Integer>> lstData) {
@@ -180,7 +180,7 @@ public class DashboardExcel {
 					}
 					cell.setCellStyle(normalStyle);
 				}
-				row = sh.getRow(count_PRIORITY_HEADER+count_PRIORITY_HEADER+lstData.get(0).size());
+				row = sh.getRow(count_PRIORITY_HEADER+lstData.get(0).size());
 				Cell cell = row.createCell(colnum);
 				// set Total count data in cell 
 				cell.setCellValue(count);
@@ -191,6 +191,12 @@ public class DashboardExcel {
 		}
 	}
 	
+	/**
+	 * This method will write data in Excel
+	 * @param fileName
+	 * @param List<List<?>> lstData
+	 * 
+	 */
 	public void writeDataInExcel(String fileName, List<List<?>> lstData) {
 		wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows
 		// will be flushed to disk
@@ -234,7 +240,13 @@ public class DashboardExcel {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * This method will return file name
+	 * @param fileName
+	 * 
+	 * @return filename
+	 */
 	private File getFile(String fileName) {
 		File f = new File(fileName);
 		if (!f.exists()) {

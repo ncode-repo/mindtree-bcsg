@@ -23,6 +23,14 @@ import util.Constant;
 
 public class Mailing {
 	static ConfigManager cm= ConfigManager.getInstance();
+	
+	/**
+	 * This method will return Recipient list
+	 * 
+	 * @param prjName
+	 * 
+	 * @return toList
+	 */
 	private String getToListByProjectName(String prjName){
 		String toList=null;
 		if(prjName.equalsIgnoreCase("ESD")){
@@ -32,6 +40,14 @@ public class Mailing {
 		}
 		return toList;
 	}
+	
+	/**
+	 * This method will send mail to Recipient
+	 * 
+	 * @param fileName
+	 * @param projectName
+	 * 
+	 */
 	public void sendMail(String fileName, String projectName) {
 
 		// Get system properties

@@ -22,7 +22,11 @@ public class PmrDashboardOps {
 	public PmrDashboardOps() {
 		// new JiraData().connectToJIRA();
 	}
-
+	
+	/**
+	 * This method is responsible to get jira client for data, prepare excel sheet and to send mail 
+	 * 
+	 */
 	public void createDevDashboard() {
 		// 1 connect to jira
 		JiraData jd = new JiraData();
@@ -37,14 +41,16 @@ public class PmrDashboardOps {
 				jd.setJc(jc);
 				jd.setProjectName(prj);
 				List<List<?>> lstData = new ArrayList<List<?>>();
-				lstData.add(jd.getReleaseWiseData(jd.getFixVersion(prj)));
+				lstData.add(jd.getReleaseWiseData(jd.getFixVersion(prj))); 
 				lstData.add(jd.getMonthWiseData());
 				lstData.add(jd.getPriorityWiseData());
 				
 				// 3 create xls and fill data in it
 				System.out.println("Writing dashboard excel...");
 				String fileName = createFileName(prj);
-				new DashboardExcel().writeDataInExcel(fileName, lstData);
+				if(lstData.size()>0){
+					new DashboardExcel().writeDataInExcel(fileName, lstData);
+				}
 
 				// 4 send mail
 				System.out.println("Sending mail...");
@@ -58,6 +64,12 @@ public class PmrDashboardOps {
 		}
 	}
 
+	/**
+	 * This method will return excel file name
+	 * @param prject name
+	 * @return file name
+	 * 
+	 */
 	public String createFileName(String prj) {
 		String fileName = cm.getProperty(Constant.CLIENT_NAME) + cm.getProperty(Constant.FILENAME_DELIM) + prj
 				+ cm.getProperty(Constant.FILENAME_DELIM) + cm.getProperty(Constant.DEV_DASHBOARD) + cm.getProperty(Constant.FILENAME_DELIM);

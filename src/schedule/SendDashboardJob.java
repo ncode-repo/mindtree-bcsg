@@ -26,6 +26,7 @@ public class SendDashboardJob implements Job {
 //    		scheduler.scheduleJob(jobDetail, trigger);
 //
 //        } catch (Exception e) {
+	//		e.printStackTrace();
 //        }
 //	}
 }

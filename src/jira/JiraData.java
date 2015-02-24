@@ -3,6 +3,7 @@ package jira;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -70,6 +71,7 @@ public class JiraData {
 			Promise<SearchResult> r = jc.getSearchClient().searchJql(jsql_reopenTickets);
 			reopen_count = r.claim().getTotal();
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in: getReopenTicketsCount()" + e.getMessage());
 		}
 		return reopen_count;
@@ -100,7 +102,7 @@ public class JiraData {
 				: cm.getProperty(Constant.TEST_DASHBOARD_END_DATE));
 		String date_condi= " AND updated>="+ strStartDate + " AND updated <= " + strEndDate;
 		String type_condi = (isForBug ? " AND issueType=Bug " : " AND issueType!=Bug ");
-		
+		//String timeSpent_condi = 
 		String jsql_monthWise = "project = " + projectName + type_condi +date_condi;
 		System.out.println("jsql_monthWise: " + jsql_monthWise);
 		return jsql_monthWise;
@@ -133,6 +135,8 @@ public class JiraData {
 	 * @return list
 	 */
 	public List<String> getReleaseWiseData(String releaseVersion) {
+		
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ getReleaseWiseData Function Start~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
 		List<String> devDataList= new ArrayList<String>();
 		
 		StringBuilder chksFor_Cr_reopened = new StringBuilder("(");
@@ -147,6 +151,7 @@ public class JiraData {
 		Double totalDevActualEfforts_Bug = 0.0;
 		Double totalQaEstimatedEfforts_Bug = 0.0;
 		Double totalQaActualEfforts_Bug = 0.0;
+		boolean incrTtlTktCntIndicator = false;
 		//get jql for release wise
 		String jsql_releaseSpec = getReleaseWiseJQL(releaseVersion);
 
@@ -164,8 +169,7 @@ public class JiraData {
 				String issueType = issue.getIssueType().getName();
 				// checking for CR 
 				if (cm.getProperty(Constant.TICKET_TYPE_CR).contains(issueType)) {
-					// CR count
-					totalTicketCount_CR++;
+					 incrTtlTktCntIndicator = false;
 					// For Reopen count
 					chksFor_Cr_reopened = chksFor_Cr_reopened.append(issue.getKey() + ",");
 					while (itrWL.hasNext()) {
@@ -179,20 +183,29 @@ public class JiraData {
 //									+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //									+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
 //							totalDevActualEfforts_CR = totalDevActualEfforts_CR + tt.getTimeSpentMinutes();
-							totalDevEstimatedEfforts_CR = totalDevEstimatedEfforts_CR + wl.getMinutesSpent();
-							totalDevActualEfforts_CR = totalDevActualEfforts_CR + wl.getMinutesSpent();
+							if(wl.getMinutesSpent() >0 ){
+								incrTtlTktCntIndicator =true;
+								totalDevEstimatedEfforts_CR = totalDevEstimatedEfforts_CR + wl.getMinutesSpent();
+								totalDevActualEfforts_CR = totalDevActualEfforts_CR + wl.getMinutesSpent();
+							}
 						} else if (getJIRA_QA_list().contains(author)) {
 //							totalQaEstimatedEfforts_CR = totalQaEstimatedEfforts_CR
 //									+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //									+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
 //							totalQaActualEfforts_CR = totalQaActualEfforts_CR + (tt.getTimeSpentMinutes() != null ? tt.getTimeSpentMinutes() : 0);
-							totalQaEstimatedEfforts_CR = totalQaEstimatedEfforts_CR +  wl.getMinutesSpent();
-							totalQaActualEfforts_CR = totalQaActualEfforts_CR +  wl.getMinutesSpent();
+							if(wl.getMinutesSpent() >0 ){
+								incrTtlTktCntIndicator =true;
+								totalQaEstimatedEfforts_CR = totalQaEstimatedEfforts_CR +  wl.getMinutesSpent();
+								totalQaActualEfforts_CR = totalQaActualEfforts_CR +  wl.getMinutesSpent();
+							}
 						}// //
 					}
+						if(incrTtlTktCntIndicator){
+							// CR count
+							totalTicketCount_CR++;
+						}
 				} else if (cm.getProperty(Constant.TICKET_TYPE_BUG).contains(issueType)) { //checking for Bugs
-					// BUG count
-					totalTicketCount_Bug++;
+					incrTtlTktCntIndicator = false;
 					// For Reopen count
 					chksFor_Bug_reopened = chksFor_Bug_reopened.append(issue.getKey() + ",");
 					while (itrWL.hasNext()) {
@@ -207,16 +220,26 @@ public class JiraData {
 //									+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //									+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
 //							totalDevActualEfforts_Bug = totalDevActualEfforts_Bug + tt.getTimeSpentMinutes();
-							totalDevEstimatedEfforts_Bug = totalDevEstimatedEfforts_Bug +  wl.getMinutesSpent();
-							totalDevActualEfforts_Bug = totalDevActualEfforts_Bug +  wl.getMinutesSpent();
+							if(wl.getMinutesSpent() >0){
+								incrTtlTktCntIndicator =true;
+								totalDevEstimatedEfforts_Bug = totalDevEstimatedEfforts_Bug +  wl.getMinutesSpent();
+								totalDevActualEfforts_Bug = totalDevActualEfforts_Bug +  wl.getMinutesSpent();
+							}
 						} else if (getJIRA_QA_list().contains(author)) { //checking for particular QA and calculating efforts
 //							totalQaEstimatedEfforts_Bug = totalQaEstimatedEfforts_Bug
 //									+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //									+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
 //							totalQaActualEfforts_Bug = totalQaActualEfforts_Bug + (tt.getTimeSpentMinutes() != null ? tt.getTimeSpentMinutes() : 0);
-							totalQaEstimatedEfforts_Bug = totalQaEstimatedEfforts_Bug +  wl.getMinutesSpent();
-							totalQaActualEfforts_Bug = totalQaActualEfforts_Bug +  wl.getMinutesSpent();
+							if(wl.getMinutesSpent() >0){
+								incrTtlTktCntIndicator =true;
+								totalQaEstimatedEfforts_Bug = totalQaEstimatedEfforts_Bug +  wl.getMinutesSpent();
+								totalQaActualEfforts_Bug = totalQaActualEfforts_Bug +  wl.getMinutesSpent();
+							}
 						}// //
+					}
+					if(incrTtlTktCntIndicator){
+						// BUG count
+						totalTicketCount_Bug++;
 					}
 				}
 			}
@@ -261,8 +284,10 @@ public class JiraData {
 			System.out.println("Total actual QA efforts for Bug's (SD)= " + totalQaActualEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
 			System.out.println("=====================================================================");
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in : getReleaseWiseData() " + e.getMessage());
 		}
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ getReleaseWiseData Function END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");	
 		return devDataList;
 	}
 
@@ -296,6 +321,7 @@ public class JiraData {
 			r = jc.getSearchClient().searchJql(jsql_openTickets_cur_month);
 			open_count = open_count + r.claim().getTotal();
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in getOpenTicketsCountForMonthWise(): " + e.getMessage());
 		}
 		return open_count;
@@ -329,6 +355,7 @@ public class JiraData {
 			r = jc.getSearchClient().searchJql(jsql_closeTickets_cur_month);
 			close_count = r.claim().getTotal();
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in getCloseTicketsCountForMonthWise(): " + e.getMessage());
 		}
 		return close_count;
@@ -354,6 +381,7 @@ public class JiraData {
 			r = jc.getSearchClient().searchJql(jsql_InvalidTickets_cur_month);
 			invalid_count = r.claim().getTotal();
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in getInvalidTicketsCountForMonthWise(): " + e.getMessage());
 		}
 		return invalid_count;
@@ -394,6 +422,41 @@ public class JiraData {
 	}
 	
 	/**
+	 * Function to check if time is logged in current month.
+	 * @param wl
+	 * @return
+	 */
+	public boolean isCurrentMonthTimeLog(Worklog wl){
+		boolean isvalidTimeLog= false;
+		String strStartDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getDashboardMonth_StartDate_yyyymmdd()
+				: cm.getProperty(Constant.TEST_DASHBOARD_START_DATE));
+		String strEndDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getPrevMonth_EndDate_yyyymmdd()
+				: cm.getProperty(Constant.TEST_DASHBOARD_END_DATE));
+		
+		
+		Date strtDt = new java.util.Date();
+		strtDt.setYear(Integer.parseInt(strStartDate.substring(0, 4))-1900);
+		strtDt.setMonth(Integer.parseInt(strStartDate.substring(5,7))-1);
+		strtDt.setDate(Integer.parseInt(strStartDate.substring(8)));
+		
+		Date endDt = new java.util.Date();
+		endDt.setYear(Integer.parseInt(strEndDate.substring(0, 4))-1900);
+		endDt.setMonth(Integer.parseInt(strEndDate.substring(5,7))-1);
+		endDt.setDate(Integer.parseInt(strEndDate.substring(8)));
+		
+		Date wlDate = new java.util.Date();
+		wlDate.setYear(wl.getStartDate().getYear()-1900);
+		wlDate.setMonth(wl.getStartDate().getMonthOfYear()-1);
+		wlDate.setDate(wl.getStartDate().getDayOfMonth());
+
+		System.out.println("isCurrentMonthTimeLog : wlDate :" + wlDate );
+		
+		if(strtDt.before(wlDate)&& endDt.after(wlDate)){
+			isvalidTimeLog =true;
+		}
+			return isvalidTimeLog;
+	}
+	/**
 	 * This method will return map of Release wise total efforts(DEV+QA)
 	 * @param jsql_releaseSpec
 	 * @return Map
@@ -401,27 +464,28 @@ public class JiraData {
 	private Map<String, Double> getTicketTotal_Count_Efforts(String jsql_releaseSpec) {
 		Map<String, Double> mapEfforts = new HashMap<String, Double>();
 		int totalTicketCount = 0;
+		boolean incrTtlTktCntIndicator = false;
 		Double totalDevEstimatedEfforts = 0.0;
 		Double totalDevActualEfforts = 0.0;
 		Double totalQaEstimatedEfforts = 0.0;
 		Double totalQaActualEfforts = 0.0;
-		try {
+		try { 
 			Promise<SearchResult> r = jc.getSearchClient().searchJql(jsql_releaseSpec);
 			Iterator<BasicIssue> it = r.claim().getIssues().iterator();
 			TimeTracking tt = null;
 			while (it.hasNext()) {
 				Issue issue = jc.getIssueClient().getIssue(((BasicIssue) it.next()).getKey()).claim();
-
+				incrTtlTktCntIndicator = false;
 				// Efforts
 				Iterator<Worklog> itrWL = issue.getWorklogs().iterator();
 				Worklog wl = null;
 				String author = null;
 				String issueType = issue.getIssueType().getName();
-				// count
-				totalTicketCount++;
+				Date timeLogDate;
 				while (itrWL.hasNext()) {
 					wl = itrWL.next();
 					author = wl.getUpdateAuthor().getName();
+					System.out.println("getTicketTotal_Count_Efforts : wl.getStartDate() " +wl.getStartDate());
 					// Efforts calc
 					tt = issue.getTimeTracking();
 					System.out.println("Author-"+author+"::issue id-"+issue.getKey()+"::Time spent(mins)-"+wl.getMinutesSpent());
@@ -430,16 +494,26 @@ public class JiraData {
 //								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //								+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
 //						totalDevActualEfforts = totalDevActualEfforts + tt.getTimeSpentMinutes();
-						totalDevEstimatedEfforts = totalDevEstimatedEfforts + wl.getMinutesSpent();
-						totalDevActualEfforts = totalDevActualEfforts + wl.getMinutesSpent();
+						if(wl.getMinutesSpent() >0){
+							incrTtlTktCntIndicator =true;
+							totalDevEstimatedEfforts = totalDevEstimatedEfforts + wl.getMinutesSpent();
+							totalDevActualEfforts = totalDevActualEfforts + wl.getMinutesSpent();
+						}
 					} else if (getJIRA_QA_list().contains(author)) {
 //						totalQaEstimatedEfforts = totalQaEstimatedEfforts
 //								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
 //								+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
 //						totalQaActualEfforts = totalQaActualEfforts + (tt.getTimeSpentMinutes() != null ? tt.getTimeSpentMinutes() : 0);
-						totalQaEstimatedEfforts = totalQaEstimatedEfforts + wl.getMinutesSpent();
-						totalQaActualEfforts = totalQaActualEfforts + wl.getMinutesSpent();
+						if(wl.getMinutesSpent() >0){
+							incrTtlTktCntIndicator =true;
+							totalQaEstimatedEfforts = totalQaEstimatedEfforts + wl.getMinutesSpent();
+							totalQaActualEfforts = totalQaActualEfforts + wl.getMinutesSpent();
+						}
 					}// //
+				}
+				if(incrTtlTktCntIndicator){
+					// count
+					totalTicketCount++;
 				}
 			}
 			System.out.println(jsql_releaseSpec);
@@ -451,6 +525,7 @@ public class JiraData {
 			mapEfforts.put("TOTAL_QA_ESTIMATED_EFFORTS", totalQaEstimatedEfforts);
 			mapEfforts.put("TOTAL_QA_ACTUAL_EFFORTS", totalQaActualEfforts);
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in getTicketTotal_Count_Efforts(): " + e.getMessage());
 		}
 		return mapEfforts;
@@ -481,6 +556,7 @@ public class JiraData {
 	 */
 	private int getPriorityWiseCount(String priority,String status) {
 		int priority_count=0;
+		Boolean isvalid = false;
 		String strStartDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getDashboardMonth_StartDate_yyyymmdd()
 				: cm.getProperty(Constant.TEST_DASHBOARD_START_DATE));
 		String strEndDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getPrevMonth_EndDate_yyyymmdd()
@@ -504,8 +580,28 @@ public class JiraData {
 		Promise<SearchResult> r =null;
 		try {
 			r = jc.getSearchClient().searchJql(jsql_FindPriority);
-			priority_count = r.claim().getTotal();
+			Iterable<BasicIssue> issues =  r.claim().getIssues();
+			//Condition to count only those tickets on which we have spent time in current month.
+			if(createdDate_condi_param.equalsIgnoreCase("updated")){
+				Iterator issueItr = issues.iterator();
+				while(issueItr.hasNext()){
+					
+					Issue issue = jc.getIssueClient().getIssue(((BasicIssue) issueItr.next()).getKey()).claim();
+					Iterator<Worklog> workLogItr = issue.getWorklogs().iterator();
+					isvalid = false;
+					while(workLogItr.hasNext()){
+						isvalid = isCurrentMonthTimeLog(workLogItr.next());
+						if(isvalid){
+							priority_count++;
+							break;
+						}
+					}
+				}
+			}else{
+				priority_count = r.claim().getTotal();
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in getPriorityWiseCount(): " + e.getMessage());
 		}
 		return priority_count;
@@ -640,6 +736,7 @@ public class JiraData {
 			System.out.println("Invalid count = " + getInvalidTicketsCountForMonthWise());
 			System.out.println("=====================================================================");
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception in getMonthWiseData(): " + e.getMessage());
 		}
 		return devDataList;

@@ -75,6 +75,7 @@ public class ConfigManager {
 			ioe.printStackTrace();
 			throw new Exception(ioe.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			printMsg("ERROR: Could not load properties from resource [" + propsFile + "]");
 			throw new Exception(e.getCause().getMessage());
 		}

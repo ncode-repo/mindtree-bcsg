@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import jira.JiraData;
 import ole.DashboardExcel;
 import util.ConfigManager;
 import util.Constant;
 import util.DateTimeUtil;
+import util.Log;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
 import comm.Mailing;
 
 public class PmrDashboardOps {
 	static ConfigManager cm = ConfigManager.getInstance();
-
+	final static Logger logger = Logger.getLogger(PmrDashboardOps.class.getName());
 	/*
 	 * 1 Connect to JIRA 2 create dev dashboard 3 create xls 4 send mail
 	 */
@@ -30,30 +33,32 @@ public class PmrDashboardOps {
 	public void createDevDashboard() {
 		// 1 connect to jira
 		JiraData jd = new JiraData();
-		System.out.println("Connecting to JIRA...");
+		
+		Log.info("Connecting to JIRA...");
 		JiraRestClient jc = jd.connectToJIRA();
 		try {
 			List<String> prjList = Arrays.asList(cm.getProperty(Constant.PROJECT_NAMES).split(","));
 
 			for (String prj : prjList) {
 				// 2 retrive data from jira
-				System.out.println("Retriving data from JIRA for..." + prj);
+				Log.info("Retriving data from JIRA for..." + prj);
 				jd.setJc(jc);
 				jd.setProjectName(prj);
 				List<List<?>> lstData = new ArrayList<List<?>>();
-				lstData.add(jd.getReleaseWiseData(jd.getFixVersion(prj))); 
+				lstData.add(jd.getReleaseWiseDataForAllReleases(jd.getFixVersion(prj))); 
 				lstData.add(jd.getMonthWiseData());
 				lstData.add(jd.getPriorityWiseData());
 				
 				// 3 create xls and fill data in it
-				System.out.println("Writing dashboard excel...");
+				Log.info("Writing dashboard excel...");
 				String fileName = createFileName(prj);
+				Log.info("File name =>"+fileName);
 				if(lstData.size()>0){
 					new DashboardExcel().writeDataInExcel(fileName, lstData);
 				}
 
 				// 4 send mail
-				System.out.println("Sending mail...");
+				Log.info("Sending mail...");
 				new Mailing().sendMail(fileName, prj);
 			}
 		} catch (Exception e) {
@@ -71,7 +76,8 @@ public class PmrDashboardOps {
 	 * 
 	 */
 	public String createFileName(String prj) {
-		String fileName = cm.getProperty(Constant.CLIENT_NAME) + cm.getProperty(Constant.FILENAME_DELIM) + prj
+		//FILE_PATH
+		String fileName = cm.getProperty(Constant.FILE_PATH) + cm.getProperty(Constant.CLIENT_NAME) + cm.getProperty(Constant.FILENAME_DELIM) + prj
 				+ cm.getProperty(Constant.FILENAME_DELIM) + cm.getProperty(Constant.DEV_DASHBOARD) + cm.getProperty(Constant.FILENAME_DELIM);
 		fileName = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? fileName + DateTimeUtil.getDashboard_MonthYear() : fileName
 				+ cm.getProperty(Constant.TEST_DASHBOARD_START_DATE) + cm.getProperty(Constant.FILENAME_DELIM) + "_"
@@ -80,6 +86,9 @@ public class PmrDashboardOps {
 	}
 
 	public static void main(String[] args) {
+		
+		Log.info("Test Logging******************************************");
+		
 		PmrDashboardOps pmrDashboardOps = new PmrDashboardOps();
 		pmrDashboardOps.createDevDashboard();
 	}

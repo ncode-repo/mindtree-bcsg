@@ -1,5 +1,6 @@
 package util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -9,8 +10,9 @@ public class ConfigManager {
 	private static ConfigManager configManager;
 	// Name of the properties file, if none was set, a default will be searched
 	private String propsFileName = "";
-
-	private static final String DEFAULT_ICM_PROPERTIES = "/conf/config.properties";
+	
+	private static final String DEFAULT_ICM_PROPERTIES = "D:\\JiraToolJar\\config.properties";
+	
 
 	private Properties cpProps = null;
 	
@@ -54,13 +56,14 @@ public class ConfigManager {
 	private void loadIt() throws Exception {
 		String propsFile = getPropsFileName();
 		printMsg(" >> Loading properties: " + propsFile);
-		InputStream is = getClass().getResourceAsStream(propsFile);
-		loadIt(is);
+	//	InputStream is = getClass().getResourceAsStream(propsFile);
+		InputStream input = new FileInputStream(propsFile);
+		loadIt(input);
 	}
 
 	private void loadIt(InputStream is) throws Exception {
-		String propsFile = getPropsFileName();
-
+		//String propsFile = getPropsFileName();
+		InputStream propsFile = new FileInputStream(getPropsFileName());
 		try {
 			printMsg(" >>>> Loading properties: " + propsFile);
 			if (is == null) {
@@ -99,7 +102,7 @@ public class ConfigManager {
 
 	private void printMsg(String msg) {
 		if (msg != null) {
-			System.out.println(clzz + ": " + msg);
+			Log.info(clzz + ": " + msg);
 		}
 	}
 

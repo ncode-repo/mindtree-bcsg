@@ -12,6 +12,7 @@ import java.util.Map;
 import util.ConfigManager;
 import util.Constant;
 import util.DateTimeUtil;
+import util.Log;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
@@ -23,6 +24,7 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.atlassian.util.concurrent.Promise;
 
 public class JiraData {
+	
 	static ConfigManager cm= ConfigManager.getInstance();
 	static DateTimeUtil dateTimeUtil = new DateTimeUtil();
 	JiraRestClient jc = null;
@@ -53,7 +55,7 @@ public class JiraData {
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Exception in: connectToJIRA()");
+			Log.info("Exception in: connectToJIRA()");
 		}
 		return jc;
 	}
@@ -66,13 +68,13 @@ public class JiraData {
 	private int getReopenTicketsCount(StringBuilder all_reopen_ids) {
 		int reopen_count = 0;
 		String jsql_reopenTickets = "project = " + projectName + " AND status WAS " + cm.getProperty(Constant.STATUS_REOPENED) + " AND issueKey IN " + all_reopen_ids;
-		System.out.println("jsql_reopenTickets= "+jsql_reopenTickets);
+		Log.info("jsql_reopenTickets= "+jsql_reopenTickets);
 		try {
 			Promise<SearchResult> r = jc.getSearchClient().searchJql(jsql_reopenTickets);
 			reopen_count = r.claim().getTotal();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in: getReopenTicketsCount()" + e.getMessage());
+			Log.info("Exception in: getReopenTicketsCount()" + e.getMessage());
 		}
 		return reopen_count;
 	}
@@ -86,7 +88,7 @@ public class JiraData {
 		String assignee_condi =getJIRA_MT_list();
 		String jsql_releaseWise = "project = " + projectName + " AND assignee was in (" + assignee_condi + ") AND fixVersion IN(" + releaseVersion
 				+ ")";
-		System.out.println("jsql_releaseWise= "+jsql_releaseWise);
+		Log.info("jsql_releaseWise= "+jsql_releaseWise);
 		return jsql_releaseWise;
 	}
 	
@@ -104,7 +106,7 @@ public class JiraData {
 		String type_condi = (isForBug ? " AND issueType=Bug " : " AND issueType!=Bug ");
 		//String timeSpent_condi = 
 		String jsql_monthWise = "project = " + projectName + type_condi +date_condi;
-		System.out.println("jsql_monthWise: " + jsql_monthWise);
+		Log.info("jsql_monthWise: " + jsql_monthWise);
 		return jsql_monthWise;
 	}
 	
@@ -113,30 +115,48 @@ public class JiraData {
 	 * @param projectName
 	 * @return version
 	 */
-	public String getFixVersion(String projectName){
-		String version= "";//Arrays.toString(cm.getProperty(Constant.RELEASE_VERSIONS).contains(projectName);
+	public List<String> getFixVersion(String projectName){
+		List<String> lstVersion= new ArrayList<String>();//Arrays.toString(cm.getProperty(Constant.RELEASE_VERSIONS).contains(projectName);
 		String str=null;
 		for(int i=0;i<cm.getProperty(Constant.RELEASE_VERSIONS).split(",").length;i++){
 			str= cm.getProperty(Constant.RELEASE_VERSIONS).split(",")[i];
 			if(str.contains(projectName)){
-				version=version+str.substring(str.indexOf("_")+1)+",";
+				lstVersion.add(str.substring(str.indexOf("_")+1));
 				//break;
 			}
 		}
-		if(version.contains(",")){
-			version=version.substring(0, version.length()-1);
+//		if(version.contains(",")){
+//			version=version.substring(0, version.length()-1);
+//		}
+		return lstVersion;
+	}
+	
+	/**
+	 * This method calls getReleaseWiseData method to get data of all the releases.
+	 * @param releaseVersion - List of all the releases.
+	 * @return list - List containing data for all the releases.
+	 */
+	
+	public List<List<String>> getReleaseWiseDataForAllReleases (List<String> lstReleaseVersions){
+		List<List<String>> lstReleaseData = new ArrayList<List<String>>();
+
+		if(null!=lstReleaseVersions){
+			Iterator<String> itr =  lstReleaseVersions.iterator();
+			while(itr.hasNext()){
+				lstReleaseData.add(getReleaseWiseData(itr.next()));
+			}
 		}
-		return version;
+		return lstReleaseData;	
 	}
 	
 	/**
 	 * This method will return list of release wise data
-	 * @param releaseVersion
-	 * @return list
+	 * @param releaseVersion - Name of release for which data needs to be extracted
+	 * @return list - List of data for a individual release.
 	 */
 	public List<String> getReleaseWiseData(String releaseVersion) {
 		
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ getReleaseWiseData Function Start~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+		Log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ getReleaseWiseData Function Start~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
 		List<String> devDataList= new ArrayList<String>();
 		
 		StringBuilder chksFor_Cr_reopened = new StringBuilder("(");
@@ -247,9 +267,9 @@ public class JiraData {
 			chksFor_Cr_reopened.append(")");
 			chksFor_Bug_reopened.deleteCharAt(chksFor_Bug_reopened.length() - 1);
 			chksFor_Bug_reopened.append(")");
-			System.out.println();
+			
 			//Filling release data list
-			devDataList.add(getFixVersion(projectName));
+			devDataList.add(releaseVersion);
 			devDataList.add(String.valueOf(totalTicketCount_CR));
 			devDataList.add(String.valueOf((chksFor_Cr_reopened.length()>1?getReopenTicketsCount(chksFor_Cr_reopened):0)));
 			devDataList.add(String.valueOf(totalQaEstimatedEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT))));
@@ -264,30 +284,30 @@ public class JiraData {
 			devDataList.add(String.valueOf(totalDevActualEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT))));
 			
 			
-			System.out.println("==============================RESULT=================================");
-			System.out.println("Project name= " + projectName);
-			System.out.println("Release name= " + getFixVersion(projectName));
-			System.out.println("================================CR===================================");
-			System.out.println("No. of CR's= " + totalTicketCount_CR);
-			System.out.println("No. of reopen CR's= " + (chksFor_Bug_reopened.length()>1?getReopenTicketsCount(chksFor_Bug_reopened):0));
-			System.out.println("Total estimated DEV efforts for CR's (SD)= " + totalDevEstimatedEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total actual DEV efforts for CR's (SD)= " + totalDevActualEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total estimated QA efforts for CR's (SD)= " + totalQaEstimatedEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total actual QA efforts for CR's (SD)= " + totalQaActualEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("=====================================================================");
-			System.out.println("===============================Bugs==================================");
-			System.out.println("No. of Bug's= " + totalTicketCount_Bug);
-			System.out.println("No. of reopen Bug's= " + (chksFor_Bug_reopened.length()>1?getReopenTicketsCount(chksFor_Bug_reopened):0));
-			System.out.println("Total estimated DEV efforts for Bug's (SD)= " + totalDevEstimatedEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total actual DEV efforts for Bug's (SD)= " + totalDevActualEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total estimated QA efforts for Bug's (SD)= " + totalQaEstimatedEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total actual QA efforts for Bug's (SD)= " + totalQaActualEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("=====================================================================");
+			Log.info("==============================RESULT=================================");
+			Log.info("Project name= " + projectName);
+			Log.info("Release name= " + getFixVersion(projectName));
+			Log.info("================================CR===================================");
+			Log.info("No. of CR's= " + totalTicketCount_CR);
+			Log.info("No. of reopen CR's= " + (chksFor_Bug_reopened.length()>1?getReopenTicketsCount(chksFor_Bug_reopened):0));
+			Log.info("Total estimated DEV efforts for CR's (SD)= " + totalDevEstimatedEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total actual DEV efforts for CR's (SD)= " + totalDevActualEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total estimated QA efforts for CR's (SD)= " + totalQaEstimatedEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total actual QA efforts for CR's (SD)= " + totalQaActualEfforts_CR / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("=====================================================================");
+			Log.info("===============================Bugs==================================");
+			Log.info("No. of Bug's= " + totalTicketCount_Bug);
+			Log.info("No. of reopen Bug's= " + (chksFor_Bug_reopened.length()>1?getReopenTicketsCount(chksFor_Bug_reopened):0));
+			Log.info("Total estimated DEV efforts for Bug's (SD)= " + totalDevEstimatedEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total actual DEV efforts for Bug's (SD)= " + totalDevActualEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total estimated QA efforts for Bug's (SD)= " + totalQaEstimatedEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total actual QA efforts for Bug's (SD)= " + totalQaActualEfforts_Bug / Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("=====================================================================");
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in : getReleaseWiseData() " + e.getMessage());
+			Log.info("Exception in : getReleaseWiseData() " + e.getMessage());
 		}
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ getReleaseWiseData Function END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");	
+		Log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ getReleaseWiseData Function END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");	
 		return devDataList;
 	}
 
@@ -322,7 +342,7 @@ public class JiraData {
 			open_count = open_count + r.claim().getTotal();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in getOpenTicketsCountForMonthWise(): " + e.getMessage());
+			Log.info("Exception in getOpenTicketsCountForMonthWise(): " + e.getMessage());
 		}
 		return open_count;
 	}
@@ -349,14 +369,14 @@ public class JiraData {
 		//jql for current month close tickets
 		String jsql_closeTickets_cur_month = "project = " + projectName + updated_condi
 				+ type_condi + assignee_wasin_condi + status_condi;
-		System.out.println("jql_closeTickets_cur_month: "+jsql_closeTickets_cur_month);
+		Log.info("jql_closeTickets_cur_month: "+jsql_closeTickets_cur_month);
 		Promise<SearchResult> r =null;
 		try {
 			r = jc.getSearchClient().searchJql(jsql_closeTickets_cur_month);
 			close_count = r.claim().getTotal();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in getCloseTicketsCountForMonthWise(): " + e.getMessage());
+			Log.info("Exception in getCloseTicketsCountForMonthWise(): " + e.getMessage());
 		}
 		return close_count;
 	}
@@ -382,7 +402,7 @@ public class JiraData {
 			invalid_count = r.claim().getTotal();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in getInvalidTicketsCountForMonthWise(): " + e.getMessage());
+			Log.info("Exception in getInvalidTicketsCountForMonthWise(): " + e.getMessage());
 		}
 		return invalid_count;
 	}
@@ -394,7 +414,7 @@ public class JiraData {
 	public String getJIRA_QA_list(){
 		if(projectName.equalsIgnoreCase("ESD")){
 			return cm.getProperty(Constant.ESD_QA_JIRA_IDS).replaceAll("[\\[\\]]", "");
-		}else if(projectName.equalsIgnoreCase("SG")){
+		}else if(projectName.equalsIgnoreCase("SG")|| projectName.equalsIgnoreCase("WESTPAC")){
 			return cm.getProperty(Constant.BH_QA_JIRA_IDS).replaceAll("[\\[\\]]", "");
 		}
 		return "";
@@ -407,7 +427,7 @@ public class JiraData {
 	public String getJIRA_DEV_list(){
 		if(projectName.equalsIgnoreCase("ESD")){
 			return cm.getProperty(Constant.ESD_DEV_JIRA_IDS).replaceAll("[\\[\\]]", "");
-		}else if(projectName.equalsIgnoreCase("SG")){
+		}else if(projectName.equalsIgnoreCase("SG") || projectName.equalsIgnoreCase("WESTPAC")){
 			return cm.getProperty(Constant.BH_DEV_JIRA_IDS).replaceAll("[\\[\\]]", "");
 		}
 		return "";
@@ -449,7 +469,7 @@ public class JiraData {
 		wlDate.setMonth(wl.getStartDate().getMonthOfYear()-1);
 		wlDate.setDate(wl.getStartDate().getDayOfMonth());
 
-		System.out.println("isCurrentMonthTimeLog : wlDate :" + wlDate );
+		Log.info("isCurrentMonthTimeLog : wlDate :" + wlDate );
 		
 		if(strtDt.before(wlDate)&& endDt.after(wlDate)){
 			isvalidTimeLog =true;
@@ -485,10 +505,10 @@ public class JiraData {
 				while (itrWL.hasNext()) {
 					wl = itrWL.next();
 					author = wl.getUpdateAuthor().getName();
-					System.out.println("getTicketTotal_Count_Efforts : wl.getStartDate() " +wl.getStartDate());
+					Log.info("getTicketTotal_Count_Efforts : wl.getStartDate() " +wl.getStartDate());
 					// Efforts calc
 					tt = issue.getTimeTracking();
-					System.out.println("Author-"+author+"::issue id-"+issue.getKey()+"::Time spent(mins)-"+wl.getMinutesSpent());
+					Log.info("Author-"+author+"::issue id-"+issue.getKey()+"::Time spent(mins)-"+wl.getMinutesSpent());
 					if (getJIRA_DEV_list().contains(author)) {
 //						totalDevEstimatedEfforts = totalDevEstimatedEfforts
 //								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
@@ -516,9 +536,9 @@ public class JiraData {
 					totalTicketCount++;
 				}
 			}
-			System.out.println(jsql_releaseSpec);
-			System.out.println("TOTAL_DEV_ESTIMATED_EFFORTS: "+totalDevEstimatedEfforts);
-			System.out.println("TOTAL_QA_ACTUAL_EFFORTS: "+totalQaActualEfforts);
+			Log.info(jsql_releaseSpec);
+			Log.info("TOTAL_DEV_ESTIMATED_EFFORTS: "+totalDevEstimatedEfforts);
+			Log.info("TOTAL_QA_ACTUAL_EFFORTS: "+totalQaActualEfforts);
 			mapEfforts.put("TOTAL_TICKET_COUNT",Double.valueOf(totalTicketCount));
 			mapEfforts.put("TOTAL_DEV_ESTIMATED_EFFORTS", totalDevEstimatedEfforts);
 			mapEfforts.put("TOTAL_DEV_ACTUAL_EFFORTS", totalDevActualEfforts);
@@ -526,7 +546,7 @@ public class JiraData {
 			mapEfforts.put("TOTAL_QA_ACTUAL_EFFORTS", totalQaActualEfforts);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in getTicketTotal_Count_Efforts(): " + e.getMessage());
+			Log.info("Exception in getTicketTotal_Count_Efforts(): " + e.getMessage());
 		}
 		return mapEfforts;
 	}
@@ -575,7 +595,7 @@ public class JiraData {
 		String assignee_wasin_condi = " AND assignee was in ("+ getJIRA_DEV_list() +") AND timespent > 0";
 		//jql to check priority
 		String jsql_FindPriority = "project = " + projectName +date_condi+priority_condi+status_condi+assignee_wasin_condi;
-		System.out.println("jsql_FindPriority: " + jsql_FindPriority);
+		Log.info("jsql_FindPriority: " + jsql_FindPriority);
 		
 		Promise<SearchResult> r =null;
 		try {
@@ -602,7 +622,7 @@ public class JiraData {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in getPriorityWiseCount(): " + e.getMessage());
+			Log.info("Exception in getPriorityWiseCount(): " + e.getMessage());
 		}
 		return priority_count;
 	}
@@ -615,16 +635,16 @@ public class JiraData {
 		Map<String, Integer> map=new HashMap<String,Integer >();
 		int count=0;
 		count=getPriorityWiseCount("Urgent",null);
-		System.out.println("P1-Urgent: "+count);
+		Log.info("P1-Urgent: "+count);
 		map.put("p1",count);
 		count=getPriorityWiseCount("High",null);
-		System.out.println("P2-High: "+count);
+		Log.info("P2-High: "+count);
 		map.put("p2",count);
 		count=getPriorityWiseCount("Medium",null);
-		System.out.println("P3-Medium: "+count);
+		Log.info("P3-Medium: "+count);
 		map.put("p3",count);
 		count=getPriorityWiseCount("Low",null);
-		System.out.println("Other-Low: "+count);
+		Log.info("Other-Low: "+count);
 		map.put("other",count);
 		return map;
 	}
@@ -637,16 +657,16 @@ public class JiraData {
 		Map<String,Integer> map=new HashMap<String,Integer>();
 		int count=0;
 		count=getPriorityWiseCount("Urgent",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
-		System.out.println("P1-Urgent: "+count);
+		Log.info("P1-Urgent: "+count);
 		map.put("p1",count);
 		count=getPriorityWiseCount("High",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
-		System.out.println("P2-High: "+count);
+		Log.info("P2-High: "+count);
 		map.put("p2",count);
 		count=getPriorityWiseCount("Medium",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
-		System.out.println("P3-Medium: "+count);
+		Log.info("P3-Medium: "+count);
 		map.put("p3",count);
 		count=getPriorityWiseCount("Low",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
-		System.out.println("Other-Low: "+count);
+		Log.info("Other-Low: "+count);
 		map.put("other",count);
 		return map;
 	}
@@ -659,16 +679,16 @@ public class JiraData {
 		Map<String, Integer> map=new HashMap<String, Integer>();
 		int count=0;
 		count=getPriorityWiseCount("Urgent","Reopened");
-		System.out.println("P1-Urgent: "+count);
+		Log.info("P1-Urgent: "+count);
 		map.put("p1",count);
 		count=getPriorityWiseCount("High","Reopened");
-		System.out.println("P2-High: "+count);
+		Log.info("P2-High: "+count);
 		map.put("p2",count);
 		count=getPriorityWiseCount("Medium","Reopened");
-		System.out.println("P3-Medium: "+count);
+		Log.info("P3-Medium: "+count);
 		map.put("p3",count);
 		count=getPriorityWiseCount("Low","Reopened");
-		System.out.println("Other-Low: "+count);
+		Log.info("Other-Low: "+count);
 		map.put("other",count);
 		return map;
 	}
@@ -684,9 +704,9 @@ public class JiraData {
 		lstPriorityData.add(getPrioritydataForRaisedForClosed());
 		lstPriorityData.add(getPrioritydataForRaisedForReOpened());
 		
-		System.out.println("total tickets :: "+ lstPriorityData.get(0));
-		System.out.println("closed tickets :: "+ lstPriorityData.get(1));
-		System.out.println("reopened tickets :: "+ lstPriorityData.get(2));
+		Log.info("total tickets :: "+ lstPriorityData.get(0));
+		Log.info("closed tickets :: "+ lstPriorityData.get(1));
+		Log.info("reopened tickets :: "+ lstPriorityData.get(2));
 		return lstPriorityData;
 	}
 	
@@ -704,8 +724,7 @@ public class JiraData {
 			lstDevData=getTicketTotal_Count_Efforts_CR_Bug();
 			mapEfforts_CR=lstDevData.get(0);
 			mapEfforts_BUG=lstDevData.get(1);
-
-			System.out.println();
+	
 			//Filing Month wise data
 			devDataList.add(String.valueOf(DateTimeUtil.getDashboard_MonthYear()));
 			devDataList.add(String.valueOf(getOpenTicketsCountForMonthWise( false)));
@@ -718,26 +737,26 @@ public class JiraData {
 			devDataList.add(String.valueOf(mapEfforts_BUG.get("TOTAL_DEV_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT))));
 			devDataList.add(String.valueOf(getInvalidTicketsCountForMonthWise()));
 			
-			System.out.println("==============================RESULT=================================");
-			System.out.println("Project name= " + projectName);
-			System.out.println("Month= " + DateTimeUtil.getDashboard_MonthYear());
-			System.out.println("================================CR===================================");
-			System.out.println("Open enhancements (Prev open + this month raised)= " + getOpenTicketsCountForMonthWise( false));
-			System.out.println("Closed enhancements (Build updated)= " + getCloseTicketsCountForMonthWise( false));
-			System.out.println("Total actual DEV efforts for CR's (SD) in current month= " + mapEfforts_CR.get("TOTAL_DEV_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total actual QA efforts for CR's (SD) in current month= " + mapEfforts_CR.get("TOTAL_QA_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("=====================================================================");
-			System.out.println("===============================Bugs==================================");
-			System.out.println("Open Bugs (Prev open + this month raised)= " + getOpenTicketsCountForMonthWise(true));
-			System.out.println("Closed Bugs (Build updated)= " + getCloseTicketsCountForMonthWise( true));
-			System.out.println("Total actual DEV efforts for Bug's (SD) in current month= " + mapEfforts_BUG.get("TOTAL_DEV_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
-			System.out.println("Total actual QA efforts for Bug's (SD) in current month= " + mapEfforts_BUG.get("TOTAL_QA_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("==============================RESULT=================================");
+			Log.info("Project name= " + projectName);
+			Log.info("Month= " + DateTimeUtil.getDashboard_MonthYear());
+			Log.info("================================CR===================================");
+			Log.info("Open enhancements (Prev open + this month raised)= " + getOpenTicketsCountForMonthWise( false));
+			Log.info("Closed enhancements (Build updated)= " + getCloseTicketsCountForMonthWise( false));
+			Log.info("Total actual DEV efforts for CR's (SD) in current month= " + mapEfforts_CR.get("TOTAL_DEV_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total actual QA efforts for CR's (SD) in current month= " + mapEfforts_CR.get("TOTAL_QA_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("=====================================================================");
+			Log.info("===============================Bugs==================================");
+			Log.info("Open Bugs (Prev open + this month raised)= " + getOpenTicketsCountForMonthWise(true));
+			Log.info("Closed Bugs (Build updated)= " + getCloseTicketsCountForMonthWise( true));
+			Log.info("Total actual DEV efforts for Bug's (SD) in current month= " + mapEfforts_BUG.get("TOTAL_DEV_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
+			Log.info("Total actual QA efforts for Bug's (SD) in current month= " + mapEfforts_BUG.get("TOTAL_QA_ACTUAL_EFFORTS")/ Integer.parseInt(cm.getProperty(Constant.EFFORTS_UNIT)));
 			
-			System.out.println("Invalid count = " + getInvalidTicketsCountForMonthWise());
-			System.out.println("=====================================================================");
+			Log.info("Invalid count = " + getInvalidTicketsCountForMonthWise());
+			Log.info("=====================================================================");
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception in getMonthWiseData(): " + e.getMessage());
+			Log.info("Exception in getMonthWiseData(): " + e.getMessage());
 		}
 		return devDataList;
 	}
@@ -745,6 +764,6 @@ public class JiraData {
 	public static void main(String[] args) throws Exception {
 		new JiraData().getFixVersion("SG");
 		/*URI baseUri = UriBuilder.fromUri(new URI("https://bcsgsvn.atlassian.net/")).path("/rest/api/latest").build(new Object[0]);
-		System.out.println(baseUri);*/
+		Log.info(baseUri);*/
 	}
 }

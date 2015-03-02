@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMultipart;
 
 import util.ConfigManager;
 import util.Constant;
+import util.Log;
 
 public class Mailing {
 	static ConfigManager cm= ConfigManager.getInstance();
@@ -103,7 +104,7 @@ public class Mailing {
 
 			// Send message
 			Transport.send(message);
-			System.out.println("Sent message successfully.");
+			Log.info("Sent message successfully.");
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
 		}

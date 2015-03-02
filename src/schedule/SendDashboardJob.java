@@ -5,6 +5,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import pmr.dasboard.PmrDashboardOps;
+import util.Log;
 
 
 public class SendDashboardJob implements Job {
@@ -12,7 +13,7 @@ public class SendDashboardJob implements Job {
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		new PmrDashboardOps().createDevDashboard();
-		System.out.println("Running...");
+		Log.info("Running...");
 	}
 //	public void initDashboardCronJob(Scheduler scheduler) {
 //    	try {

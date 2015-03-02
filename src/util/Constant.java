@@ -3,6 +3,7 @@ package util;
 public class Constant {
 	public static String CLIENT_NAME = "CLIENT_NAME";
 	public static String FILENAME_DELIM = "FILENAME_DELIM";
+	public static String FILE_PATH = "FILE_PATH";
 	public static String DEV_DASHBOARD = "DEV_DASHBOARD";
 	public static String TEST_DASHBOARD_NAME = "TEST_DASHBOARD_NAME";
 	

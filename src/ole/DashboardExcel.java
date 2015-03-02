@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import util.ConfigManager;
 import util.Constant;
+import util.Log;
 
 public class DashboardExcel {
 	static ConfigManager cm=ConfigManager.getInstance();
@@ -28,7 +30,7 @@ public class DashboardExcel {
 
 	//Row numbers for header
 	Integer count_RELEASE_HEADER = 0;
-	Integer count_MONTH_HEADER = 5;
+	Integer count_MONTH_HEADER = 7;
 	Integer count_PRIORITY_HEADER = 10;
 	//
 
@@ -206,14 +208,23 @@ public class DashboardExcel {
 		createReleaseDataHeader();
 		Row row = sh.createRow(++count_RELEASE_HEADER);
 		if (lstData != null) {
-			fillData(row, lstData.get(0));
+			List<List<String>> lstRelesewiseData =(List<List<String>>) lstData.get(0);
+			Iterator <List<String>> itrRelesewiseData = lstRelesewiseData.iterator(); 
+			while(itrRelesewiseData.hasNext()){
+				row = sh.createRow(++count_RELEASE_HEADER);
+				fillData(row, itrRelesewiseData.next());
+			}
 		}
+		
+		count_MONTH_HEADER = count_RELEASE_HEADER +2;
 		// Month wise
 		createMonthDataHeader();
 		row = sh.createRow(++count_MONTH_HEADER);
 		if (lstData != null) {
 			fillData(row, lstData.get(1));
 		}
+		count_PRIORITY_HEADER = count_MONTH_HEADER+2;
+		
 		// Priority wise Month data
 		createPriorityDataHeader();
 		row = sh.createRow(++count_PRIORITY_HEADER);
@@ -232,7 +243,7 @@ public class DashboardExcel {
 			out.close();
 			// dispose of temporary files backing this workbook on disk
 			wb.dispose();
-			System.out.println("File is created");
+			Log.info("File is created");
 			// Launch Excel File Created
 			//Desktop.getDesktop().open(f);
 		} catch (IOException e) {

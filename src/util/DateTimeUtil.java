@@ -100,6 +100,7 @@ public class DateTimeUtil {
 //    }
 	public static void main(String[] args) {
 		String s=new DateTimeUtil().getDashboard_MonthYear();
-		System.out.println(s); 
+		Log.info(s); 
+		
 	}
 }

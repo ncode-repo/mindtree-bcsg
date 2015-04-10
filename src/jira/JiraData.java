@@ -286,7 +286,7 @@ public class JiraData {
 			
 			Log.info("==============================RESULT=================================");
 			Log.info("Project name= " + projectName);
-			Log.info("Release name= " + getFixVersion(projectName));
+			Log.info("Release name= " + releaseVersion);
 			Log.info("================================CR===================================");
 			Log.info("No. of CR's= " + totalTicketCount_CR);
 			Log.info("No. of reopen CR's= " + (chksFor_Bug_reopened.length()>1?getReopenTicketsCount(chksFor_Bug_reopened):0));
@@ -326,7 +326,7 @@ public class JiraData {
 				: cm.getProperty(Constant.TEST_DASHBOARD_END_DATE));
 		String type_condi = (isForBug ? " AND issueType=Bug " : " AND issueType!=Bug ");
 		String status_condi = " AND status IN ("+cm.getProperty(Constant.STATUS_DEV_OPEN)+")";
-		String assignee_wasin_condi = " (assignee was in (" + getJIRA_MT_list() + ")"+" AND timespent > 0)";
+		String assignee_wasin_condi = " (assignee was in (" + getJIRA_MT_list() + ")"+" )";
 		String assignee_in_condi= " assignee in ("+ getJIRA_MT_list() + ")";
 		// jql for open tickets in last month
 		String jsql_openTickets_inlast_month = "project = " + projectName + " AND created < " + strStartDate + status_condi + " AND "+assignee_wasin_condi
@@ -355,6 +355,7 @@ public class JiraData {
 	private int getCloseTicketsCountForMonthWise(boolean isForBug) {
 
 		int close_count = 0;
+		Boolean isvalid = false;
 		String strStartDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getDashboardMonth_StartDate_yyyymmdd()
 				: cm.getProperty(Constant.TEST_DASHBOARD_START_DATE));
 		String strEndDate = (cm.getProperty(Constant.TEST_DASHBOARD_START_DATE).equals("") ? DateTimeUtil.getPrevMonth_EndDate_yyyymmdd()
@@ -363,8 +364,8 @@ public class JiraData {
 		
 		String type_condi = (isForBug ? " AND issueType=Bug " : " AND issueType!=Bug ");
 		//String status_condi = " AND status WAS IN ("+cm.getProperty(Constant.STATUS_BUILD_UPDATED)+") AND status!="+cm.getProperty(Constant.STATUS_REOPENED);
-		String status_condi = " AND status WAS IN ("+cm.getProperty(Constant.STATUS_BUILD_UPDATED)+")";
-		String assignee_wasin_condi = " AND assignee was in ("+ getJIRA_DEV_list() +") AND timespent > 0";
+		String status_condi = " AND status WAS IN ("+cm.getProperty(Constant.STATUS_CLOSED)+")";
+		String assignee_wasin_condi = " AND assignee was in ("+ getJIRA_MT_list() +") AND timespent > 0";
 
 		//jql for current month close tickets
 		String jsql_closeTickets_cur_month = "project = " + projectName + updated_condi
@@ -373,7 +374,21 @@ public class JiraData {
 		Promise<SearchResult> r =null;
 		try {
 			r = jc.getSearchClient().searchJql(jsql_closeTickets_cur_month);
-			close_count = r.claim().getTotal();
+			Iterable<BasicIssue> issues =  r.claim().getIssues();
+			Iterator issueItr = issues.iterator();
+			
+			while(issueItr.hasNext()){		
+				Issue issue = jc.getIssueClient().getIssue(((BasicIssue) issueItr.next()).getKey()).claim();
+				Iterator<Worklog> workLogItr = issue.getWorklogs().iterator();
+				isvalid = false;
+				while(workLogItr.hasNext()){
+					isvalid = isCurrentMonthTimeLog(workLogItr.next());
+					if(isvalid){
+						close_count++;
+						break;
+					}
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.info("Exception in getCloseTicketsCountForMonthWise(): " + e.getMessage());
@@ -414,7 +429,7 @@ public class JiraData {
 	public String getJIRA_QA_list(){
 		if(projectName.equalsIgnoreCase("ESD")){
 			return cm.getProperty(Constant.ESD_QA_JIRA_IDS).replaceAll("[\\[\\]]", "");
-		}else if(projectName.equalsIgnoreCase("SG")|| projectName.equalsIgnoreCase("WESTPAC")){
+		}else if(projectName.equalsIgnoreCase("SG")|| projectName.equalsIgnoreCase("WESTPAC")|| projectName.equalsIgnoreCase("SBH")){
 			return cm.getProperty(Constant.BH_QA_JIRA_IDS).replaceAll("[\\[\\]]", "");
 		}
 		return "";
@@ -427,7 +442,7 @@ public class JiraData {
 	public String getJIRA_DEV_list(){
 		if(projectName.equalsIgnoreCase("ESD")){
 			return cm.getProperty(Constant.ESD_DEV_JIRA_IDS).replaceAll("[\\[\\]]", "");
-		}else if(projectName.equalsIgnoreCase("SG") || projectName.equalsIgnoreCase("WESTPAC")){
+		}else if(projectName.equalsIgnoreCase("SG") || projectName.equalsIgnoreCase("WESTPAC") || projectName.equalsIgnoreCase("SBH")){
 			return cm.getProperty(Constant.BH_DEV_JIRA_IDS).replaceAll("[\\[\\]]", "");
 		}
 		return "";
@@ -469,7 +484,7 @@ public class JiraData {
 		wlDate.setMonth(wl.getStartDate().getMonthOfYear()-1);
 		wlDate.setDate(wl.getStartDate().getDayOfMonth());
 
-		Log.info("isCurrentMonthTimeLog : wlDate :" + wlDate );
+		//Log.info("isCurrentMonthTimeLog : wlDate :" + wlDate );
 		
 		if(strtDt.before(wlDate)&& endDt.after(wlDate)){
 			isvalidTimeLog =true;
@@ -504,32 +519,35 @@ public class JiraData {
 				Date timeLogDate;
 				while (itrWL.hasNext()) {
 					wl = itrWL.next();
-					author = wl.getUpdateAuthor().getName();
-					Log.info("getTicketTotal_Count_Efforts : wl.getStartDate() " +wl.getStartDate());
-					// Efforts calc
-					tt = issue.getTimeTracking();
-					Log.info("Author-"+author+"::issue id-"+issue.getKey()+"::Time spent(mins)-"+wl.getMinutesSpent());
-					if (getJIRA_DEV_list().contains(author)) {
-//						totalDevEstimatedEfforts = totalDevEstimatedEfforts
-//								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
-//								+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
-//						totalDevActualEfforts = totalDevActualEfforts + tt.getTimeSpentMinutes();
-						if(wl.getMinutesSpent() >0){
-							incrTtlTktCntIndicator =true;
-							totalDevEstimatedEfforts = totalDevEstimatedEfforts + wl.getMinutesSpent();
-							totalDevActualEfforts = totalDevActualEfforts + wl.getMinutesSpent();
-						}
-					} else if (getJIRA_QA_list().contains(author)) {
-//						totalQaEstimatedEfforts = totalQaEstimatedEfforts
-//								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
-//								+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
-//						totalQaActualEfforts = totalQaActualEfforts + (tt.getTimeSpentMinutes() != null ? tt.getTimeSpentMinutes() : 0);
-						if(wl.getMinutesSpent() >0){
-							incrTtlTktCntIndicator =true;
-							totalQaEstimatedEfforts = totalQaEstimatedEfforts + wl.getMinutesSpent();
-							totalQaActualEfforts = totalQaActualEfforts + wl.getMinutesSpent();
-						}
-					}// //
+					boolean	isvalid = isCurrentMonthTimeLog(wl);
+					if(isvalid){
+						author = wl.getUpdateAuthor().getName();
+						Log.info("getTicketTotal_Count_Efforts : wl.getStartDate() " +wl.getStartDate());
+						// Efforts calc
+						tt = issue.getTimeTracking();
+						Log.info("Author-"+author+"::issue id-"+issue.getKey()+"::Time spent(mins)-"+wl.getMinutesSpent());
+						if (getJIRA_DEV_list().contains(author)) {
+							//						totalDevEstimatedEfforts = totalDevEstimatedEfforts
+							//								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
+							//								+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
+							//						totalDevActualEfforts = totalDevActualEfforts + tt.getTimeSpentMinutes();
+							if(wl.getMinutesSpent() >0){
+								incrTtlTktCntIndicator =true;
+								totalDevEstimatedEfforts = totalDevEstimatedEfforts + wl.getMinutesSpent();
+								totalDevActualEfforts = totalDevActualEfforts + wl.getMinutesSpent();
+							}
+						} else if (getJIRA_QA_list().contains(author)) {
+							//						totalQaEstimatedEfforts = totalQaEstimatedEfforts
+							//								+ (tt.getOriginalEstimateMinutes() != null ? tt.getOriginalEstimateMinutes() : 0)
+							//								+ (tt.getRemainingEstimateMinutes() != null ? tt.getRemainingEstimateMinutes() : 0);
+							//						totalQaActualEfforts = totalQaActualEfforts + (tt.getTimeSpentMinutes() != null ? tt.getTimeSpentMinutes() : 0);
+							if(wl.getMinutesSpent() >0){
+								incrTtlTktCntIndicator =true;
+								totalQaEstimatedEfforts = totalQaEstimatedEfforts + wl.getMinutesSpent();
+								totalQaActualEfforts = totalQaActualEfforts + wl.getMinutesSpent();
+							}
+						}// //
+					}
 				}
 				if(incrTtlTktCntIndicator){
 					// count
@@ -588,13 +606,14 @@ public class JiraData {
 		}else{
 			createdDate_condi_param="updated";
 		}
+		String issueTypeCondition = " AND issueType=Bug ";
 		String date_condi= " AND "+createdDate_condi_param+">="+ strStartDate + " AND "+createdDate_condi_param+"<= " + strEndDate;
 		String priority_condi=" AND priority="+priority;
 		String status_condi = (status!=null?" AND status was in("+status+")":"");
 		//String assignee_condi =" AND assignee was in (" + getJIRA_MT_list() + ")";
-		String assignee_wasin_condi = " AND assignee was in ("+ getJIRA_DEV_list() +") AND timespent > 0";
+		String assignee_wasin_condi = " AND assignee was in ("+ getJIRA_MT_list() +")";
 		//jql to check priority
-		String jsql_FindPriority = "project = " + projectName +date_condi+priority_condi+status_condi+assignee_wasin_condi;
+		String jsql_FindPriority = "project = " + projectName +date_condi+priority_condi+status_condi+assignee_wasin_condi + issueTypeCondition;
 		Log.info("jsql_FindPriority: " + jsql_FindPriority);
 		
 		Promise<SearchResult> r =null;
@@ -656,16 +675,16 @@ public class JiraData {
 	private Map<String, Integer> getPrioritydataForRaisedForClosed(){
 		Map<String,Integer> map=new HashMap<String,Integer>();
 		int count=0;
-		count=getPriorityWiseCount("Urgent",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
+		count=getPriorityWiseCount("Urgent",cm.getProperty(Constant.STATUS_CLOSED));
 		Log.info("P1-Urgent: "+count);
 		map.put("p1",count);
-		count=getPriorityWiseCount("High",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
+		count=getPriorityWiseCount("High",cm.getProperty(Constant.STATUS_CLOSED));
 		Log.info("P2-High: "+count);
 		map.put("p2",count);
-		count=getPriorityWiseCount("Medium",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
+		count=getPriorityWiseCount("Medium",cm.getProperty(Constant.STATUS_CLOSED));
 		Log.info("P3-Medium: "+count);
 		map.put("p3",count);
-		count=getPriorityWiseCount("Low",cm.getProperty(Constant.STATUS_BUILD_UPDATED));
+		count=getPriorityWiseCount("Low",cm.getProperty(Constant.STATUS_CLOSED));
 		Log.info("Other-Low: "+count);
 		map.put("other",count);
 		return map;

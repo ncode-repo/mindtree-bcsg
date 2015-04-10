@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter.DEFAULT;
+
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -50,7 +52,7 @@ public class DashboardExcel {
 	 */
 	private static CellStyle getHeaderStyle() {
 		CellStyle style = wb.createCellStyle();
-		style.setFillForegroundColor(IndexedColors.BLUE_GREY.getIndex());
+		style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		style.setWrapText(true);
 		style.setBorderBottom(CellStyle.BORDER_THIN);
@@ -62,6 +64,7 @@ public class DashboardExcel {
 		style.setBorderTop(CellStyle.BORDER_THIN);
 		style.setTopBorderColor(IndexedColors.BLACK.getIndex());
 		style.setAlignment(CellStyle.ALIGN_CENTER);
+	
 		return style;
 	}
 

@@ -429,10 +429,9 @@ public class JiraData {
 	public String getJIRA_QA_list(){
 		if(projectName.equalsIgnoreCase("ESD")){
 			return cm.getProperty(Constant.ESD_QA_JIRA_IDS).replaceAll("[\\[\\]]", "");
-		}else if(projectName.equalsIgnoreCase("SG")|| projectName.equalsIgnoreCase("WESTPAC")|| projectName.equalsIgnoreCase("SBH")){
+		}else {
 			return cm.getProperty(Constant.BH_QA_JIRA_IDS).replaceAll("[\\[\\]]", "");
 		}
-		return "";
 	}
 	
 	/**
@@ -442,10 +441,9 @@ public class JiraData {
 	public String getJIRA_DEV_list(){
 		if(projectName.equalsIgnoreCase("ESD")){
 			return cm.getProperty(Constant.ESD_DEV_JIRA_IDS).replaceAll("[\\[\\]]", "");
-		}else if(projectName.equalsIgnoreCase("SG") || projectName.equalsIgnoreCase("WESTPAC") || projectName.equalsIgnoreCase("SBH")){
+		}else {
 			return cm.getProperty(Constant.BH_DEV_JIRA_IDS).replaceAll("[\\[\\]]", "");
 		}
-		return "";
 	}
 	
 	/**

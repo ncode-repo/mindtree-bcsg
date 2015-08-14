@@ -1,0 +1,10 @@
+1. JRE stores certificates inside keystore named as "cacerts" in folder C:/Program Files/Java/<<your_jdk_name>>/jre/lib/security.
+2. Navigate to C:/Program Files/Java/<<your_jdk_name>>/jre/lib/security from command prompt.
+3. Type in keytool -import -keystore cacerts -file <<location of the certificate>>jboss.cert.
+3. Common password of keystore is "changeit".
+4. Now this will print details about certificate and ask you for confirmation of adding certificates:
+
+	Trust this certificate? [no]:  y
+	
+5. The certificate will be installed.
+

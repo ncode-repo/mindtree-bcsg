@@ -75,6 +75,7 @@ public class Hp_POC {
 			String token_id = token.getString("id");
 			System.out.println("Token ID: " + token_id);
 			listSvcOfferings(token_id,"");
+			getOfferingDetails(token_id);
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 		}
@@ -113,6 +114,26 @@ public class Hp_POC {
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 			System.out.println("Response message:" + wsResponse.toString() );
+		}
+	}
+	
+	public static void getOfferingDetails(String token){
+		Client client = Client.create();
+		WebResource webResource = client
+				.resource("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mppoffering/8a83d7a44f1d0f21014f1d37683608a1?catalogId=8a83d7a44f1d0f21014f23000f8816df&category=SIMPLE_SYSTEM");
+		String authorization = "idmTransportUser" + ":" + "idmTransportUser";
+		authorization = headerAuth(authorization);
+		ClientResponse wsResponse = webResource
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON)
+				.header("Authorization", authorization)
+				.header("X-Auth-token", token).get(ClientResponse.class);
+		try {
+			JSONObject result = wsResponse.getEntity(JSONObject.class);
+			System.out.println("Offerings Details: " + result.toString());
+		} catch (Exception e) {
+			System.out.println("Exception message: " + e.getMessage());
+			System.out.println("Response message:" + wsResponse.toString());
 		}
 	}
 

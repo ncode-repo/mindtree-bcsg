@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Welcome page</title>
+<title>Success page</title>
 </head>
 <body>
-
+Subscription successful.
 </body>
 </html>

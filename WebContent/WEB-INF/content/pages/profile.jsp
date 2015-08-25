@@ -35,7 +35,7 @@
 	<div class="container padding-top-thirty">
 		<div class="row">
 			<div class="col-sm-12">
-				<form name="pofileForm" id="profileId"  class="details-form payment-form">
+				<form name="pofileForm" action="profile.do" id="profileId"  method="post" class="details-form payment-form">
 				
 					<!--  User Email  -->
 					<label for="userEmail"> 

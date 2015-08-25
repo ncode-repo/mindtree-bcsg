@@ -7,14 +7,21 @@
 <struts-config>
 	<!-- ================================================ Form Bean Definitions -->
     <form-beans>
+     <form-bean name="UserDetailsForm" type="com.subscribe.UserDetailsActionForm"/>
+     <form-bean name="SubscribeForm" type="com.subscribe.SubscribeActionForm"/>
     </form-beans>
 	<!-- ============ Action Mapping Definitions -->
 	<action-mappings>
-		<action path="/welcome" forward="/WEB-INF/content/pages/index.jsp"></action>
+		<action path="/welcome" forward="/WEB-INF/content/pages/profile.jsp"></action>
 		
-		<action path="/profile" forward="/WEB-INF/content/pages/profile.jsp"></action>
+		<action path="/profile" name="UserDetailsForm" scope="session" type="com.actions.UserDetailsAction" >
+		<forward name="subscribe" path="/WEB-INF/content/pages/appDetails.jsp"></forward>
+		</action>
 		
-		<action path="/getAppsDet" forward="/WEB-INF/content/pages/appDetails.jsp"></action>
+		<action path="/getAppsDet" name="SubscribeForm" type="com.actions.SubscribeAction" >
+		<forward name="failure"  path="/WEB-INF/content/pages/appDetails.jsp" />
+		<forward name="success"  path="/WEB-INF/content/pages/index.jsp" />
+		</action>
 		
 	</action-mappings>
 	<message-resources

@@ -3,8 +3,13 @@ $(document).ready(function() {
 	
 	$('#saveButton').click(function(){
 		if($('#profileId').valid()) {
-			alert(" Sumo");	
+			//alert(" Sumo");	
+			$('#profileId').submit();
 		}
+	});
+	$('#continueButton').click(function(){
+			//alert(" Last Form");	
+			$('#servicesForm').submit();
 	});
 });
 

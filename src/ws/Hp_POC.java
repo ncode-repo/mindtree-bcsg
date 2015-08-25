@@ -76,7 +76,44 @@ public class Hp_POC {
 		}
 
 	}
+public static String generateToken(){
+	JSONObject json = new JSONObject(); //
+	Client client = Client.create();
+	try {
+		JSONObject jsonCred = new JSONObject();
+		jsonCred.put("username", "bcsguser");
+		jsonCred.put("password", "cloud");
+		json.put("passwordCredentials", jsonCred);
+		json.put("tenantName", "BCSG");
+		System.out.println("Request body: " + json.toString());
+	} catch (JSONException e) {
+		e.printStackTrace();
+	}
 
+	WebResource webResource = client
+			.resource("https://csa45.pocaas.hpintelco.org:8444/idm-service/v2.0/tokens");
+	// WebResource webResource =
+	// client.resource("https://213.30.160.29:8444/idm-service/v2.0/tokens");
+
+	String authorization = "idmTransportUser" + ":" + "idmTransportUser";
+	authorization = headerAuth(authorization);
+
+	ClientResponse wsResponse = webResource
+			.accept(MediaType.APPLICATION_JSON)
+			.type(MediaType.APPLICATION_JSON)
+			.header("Authorization", authorization)
+			.post(ClientResponse.class, json);
+	String token_id=null;
+	try {
+		JSONObject result = wsResponse.getEntity(JSONObject.class);
+		JSONObject token = result.getJSONObject("token");
+		 token_id = token.getString("id");
+		System.out.println("Token ID: " + token_id);
+	} catch (Exception e) {
+		System.out.println("Exception message: " + e.getMessage());
+	}
+	return token_id;
+}
 	public static String headerAuth(String credentials) {
 		if (credentials != null) {
 			String encoded = Base64.encode(credentials.getBytes());
@@ -85,7 +122,7 @@ public class Hp_POC {
 		return credentials;
 	}
 
-	public static void listSvcOfferings(String token, String filter) {
+	public static JSONObject listSvcOfferings(String token, String filter) {
 		JSONObject json = new JSONObject();
 		Client client = Client.create();
 		try {
@@ -105,15 +142,17 @@ public class Hp_POC {
 				.type(MediaType.APPLICATION_JSON)
 				.header("Authorization", authorization)
 				.header("X-Auth-token", token).post(ClientResponse.class, json);
+		JSONObject result = null;
 		try {
-			JSONObject result = wsResponse.getEntity(JSONObject.class);
-			JSONArray members = JsonParser.parseJson(result);
+			result = wsResponse.getEntity(JSONObject.class);
+			//JSONArray members = JsonParser.parseJson(result);
 			System.out.println("Service offerings: " + result.toString());
-			getOfferingDetails(token,members,"SIMPLE_SYSTEM");
+			//getOfferingDetails(token,members,"SIMPLE_SYSTEM");
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 			System.out.println("Response message:" + wsResponse.toString());
 		}
+		return result;
 	}
 
 	public static void getOfferingDetails(String token,JSONArray members, String category){
@@ -148,21 +187,25 @@ public class Hp_POC {
 		try {
 			JSONObject result = wsResponse.getEntity(JSONObject.class);
 			System.out.println("Offerings Details: " + result.toString());
-			createSubscription(token,"SIMPLE_SYSTEM");
+			//createSubscription(token,"SIMPLE_SYSTEM");
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 			System.out.println("Response message:" + wsResponse.toString());
 		}
 	}
 
-	public static void createSubscription(String token,String categoryName){
+	public static void createSubscription(String token,String id,String catalogId,String categoryName){
 		JSONObject json = new JSONObject(); 
 		Client client = Client.create();
 		StringBuilder s = new StringBuilder();
+		StringBuilder uri = new StringBuilder();
+		uri.append("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-request/");
+		uri.append(id+"?catalogId=");
+		uri.append(catalogId);
 		s.append("--Abcdefgh ");
 		s.append("\n Content-Disposition: form-data; name=\"requestForm\" ");
 		try {
-			json.put("categoryName", "SOFTWARE");
+			json.put("categoryName",categoryName);
 			json.put("subscriptionName", "NEW_TEST");
 			json.put("startDate", "2015-08-21T05:32:17.000Z");
 			Calendar c = Calendar.getInstance();
@@ -175,8 +218,9 @@ public class Hp_POC {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		//"https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-request/8a83d7a44f1d0f21014f1d37683608a1?catalogId=8a83d7a44f1d0f21014f23000f8816df"
 		WebResource webResource = client
-				.resource("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-request/8a83d7a44f1d0f21014f1d37683608a1?catalogId=8a83d7a44f1d0f21014f23000f8816df&category=SOFTWARE");
+				.resource(uri.toString());
 		String authorization = "idmTransportUser" + ":" + "idmTransportUser";
 		authorization = headerAuth(authorization);
 		ClientResponse wsResponse = webResource

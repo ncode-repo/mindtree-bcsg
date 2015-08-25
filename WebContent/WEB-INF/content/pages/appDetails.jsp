@@ -1,5 +1,14 @@
 <!DOCTYPE html>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
+<%@ page import="com.subscribe.UserDetailsActionForm"%>
+<%@ page import="org.codehaus.jettison.json.JSONObject"%>
 <html>
+<%
+UserDetailsActionForm userDetails = (UserDetailsActionForm) session.getAttribute("userDetails");
+JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
+%>
 <head>
 	<title> Product  Details </title>
 	<link href="ui/css/bootstrap/bootstrap.css" rel="stylesheet">
@@ -8,7 +17,9 @@
 	<script type="text/javascript" src="ui/js/jquery.1.9.0.js"></script>
 	<script type="text/javascript" src="ui/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="ui/js/profDetails.js"></script>
     <script type="text/javascript">
+    var jsonNew = <%=jsonArray.toString()%>;
 		var jsonResults = 
 		{ "@type":"urn:x-hp:2012:software:cloud:data_model:service-offering:collection",
 		  "@total_results":1,
@@ -169,10 +180,10 @@
 			var id=prodid.substring("prodid".length);
 			
 			
-			$('#prodCategory').html(jsonResults.members[id].category.displayName);
-			$('#prodVerson').html(jsonResults.members[id].offeringVersion);
-			$('#prodPrice').html('&#36;'+jsonResults.members[id].initPrice.price);
-			$('#prodRecPrice').html('&#36;'+jsonResults.members[id].recurringPrice.price);
+			$('#prodCategory').html(jsonNew.members[id].category.displayName);
+			$('#prodVerson').html(jsonNew.members[id].offeringVersion);
+			$('#prodPrice').html('&#36;'+jsonNew.members[id].initPrice.price);
+			$('#prodRecPrice').html('&#36;'+jsonNew.members[id].recurringPrice.price);
 			
 			$('#prod-details').on('show.bs.mocdal', centerModal);
 			$('#prod-details').modal("show");	
@@ -189,19 +200,26 @@
 		}
 		
 		
+
+
+		
 		$(window).on("resize", function () {
 		    $('.modal:visible').each(centerModal);
 		});
 		
 		$(document).ready(function() {
 			
+
 			var returnedData = '';
-	    	$.each(jsonResults.members,function(y,z){
+	    	$.each(jsonNew.members,function(y,z){
 	    		returnedData += '<div class="row greyspace billing-item">';
 	    		returnedData += '<div class="col-sm-3">';
-	    		returnedData += '<input type="checkbox" value="prodselcect'+y+'" name="prodsel" />';
+	    		returnedData += '<input type="radio" class="prodcheck" value="prodselect'+y+'" name="prodsel" />';
+	    		returnedData += '<input type="hidden"  value="'+z.id+'" name="svcId" />';
+	    		returnedData += '<input type="hidden"  value="'+z.catalogId+'" name="catalogId" />';
+	    		returnedData += '<input type="hidden"  value="'+z.category.name+'" name="categoryName" />';
 	    		returnedData += '</div>';
-	    		returnedData += '<div class="col-sm-5">';
+	    		returnedData += '<div class="col-sm-5 margin-top-ten">';
 	    		returnedData += z.displayName;
 	    		returnedData += '</div>';
 	    		returnedData += '<div class="col-sm-4">';
@@ -211,9 +229,20 @@
 	    		returnedData += '</div>';
 	    		returnedData += '</div>';
     		});
-	    	$('#resposediv').append(returnedData);	
+	    	$('#resposediv').append(returnedData);
+	    	 $("input[name='prodsel']").click(function() { 
+                 checkCkbox(); 
+         });
 			
 		});
+		function checkCkbox() {
+            var numChkd = $("input[name='prodsel']:checked").length;
+            if(numChkd == 0) {
+                $("#continueButton").attr('disabled', true);
+            } else {
+                $("#continueButton").attr('disabled', false);
+            }
+        } 
     </script>
     
 </head>
@@ -234,6 +263,11 @@
 	<div class="container padding-top-thirty">
     	<div class="row">
         	<div class="col-sm-12">
+        	<logic:present name="error" scope="request">
+					<strong>
+					Error while creating subscription
+					</strong>
+				</logic:present> 
           		<h1 class="payment-select">
           			Application Details
           		</h1>
@@ -249,14 +283,16 @@
               			Other Product Details 
             		</div>
           		</div>
+          		<form name="services" action="getAppsDet.do" id="servicesForm"  method="post">
 				<div class="row" id="resposediv">
 				  
 				</div>		  
 	           <div class="row margin-bottom-eighty">
 	           		<div class="col-sm-12 no-padding">
-	           			<input type="button" id="continueButton" class="btn btn-primary" name="continueUser" value="Continue User">
+	           			<input type="button" disabled="disabled" id="continueButton" class="btn btn-primary" name="continueUser" value="Continue User">
 	           		</div>
 	           </div>
+	           </form>
         </div>
       </div>
     </div>

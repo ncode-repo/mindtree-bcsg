@@ -7,11 +7,14 @@ import org.codehaus.jettison.json.JSONObject;
 
 import ws.JsonConstants;
 
+import com.subscribe.SubscribeActionForm;
+
 public class JsonParser {
 
-public static JSONArray parseJson(JSONObject result){
+public static SubscribeActionForm parseJson(JSONObject result,int index){
 	int records = 0;
 	JSONArray members = new JSONArray();
+	SubscribeActionForm form = new SubscribeActionForm();
 	Iterator<String> i =result.keys();
 	while(i.hasNext()){
 		try {
@@ -20,12 +23,21 @@ public static JSONArray parseJson(JSONObject result){
 			   records = (Integer) result.get(key);
 			  if(key.equalsIgnoreCase(JsonConstants.MEMBERS)){
 				  members = (JSONArray) result.get(key);
+				  for(int k=0;k<members.length();k++){
+					  if(k==index){
+						  JSONObject j=  members.getJSONObject(k);
+						  form.setSvcId((String)j.get("id"));  
+						  form.setCatalogId((String)j.get("catalogId"));
+						  form.setCategoryName(j.getJSONObject("category").getString("name"));
+						  break;
+					  }
+				  }
 			  }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	return members;
+	return form;
 }
 }

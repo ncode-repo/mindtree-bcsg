@@ -7435,5 +7435,8 @@ and (min-device-height : 640px)
 and (max-device-width : 360px) {
 	#company-duration label {
     	padding-right: 125px !important;
-	}	
+	}
+}
+.prodcheck { 
+        margin-top:14px !important; 
 }

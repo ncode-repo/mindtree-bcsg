@@ -101,15 +101,21 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 		</div>
 	</header>
 	
+	<logic:present name="error" scope="request">
+		<div id="suvscirbeErrMsg" class="padding-top-thirty">
+			<div class="message">
+				<h5 class="center">
+					<span class="glyphicon glyphicon-exclamation-sign red"></span>
+					&nbsp;&nbsp;&nbsp;
+					Error while creating subscription
+				</h5>
+			</div>
+		</div>
+	</logic:present>
 	
 	<div class="container padding-top-thirty">
     	<div class="row">
         	<div class="col-sm-12">
-        	<logic:present name="error" scope="request">
-					<strong>
-					Error while creating subscription
-					</strong>
-				</logic:present> 
           		<h1 class="payment-select">
           			Application Details
           		</h1>

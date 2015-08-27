@@ -19,112 +19,21 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
     
     <script type="text/javascript">
-    	 
-		var jsonNew = 
-		{ 
-		  "@type":"urn:x-hp:2012:software:cloud:data_model:service-offering:collection",
-		  "@total_results":1,
-		  "@start_index":0,
-		  "@items_per_page":1,
-		  "members":[
-		 
-		            {
-						"@self": "/csa/api/mpp/mpp-subscription/8a83d7a44f280299014f2b952603012f",
-		        		"@type": "urn:x-hp:2012:software:cloud:data_model:service-subscription",
-		        		"name": "Fully customized VM (1.0.0)",
-		              	"ext": {
-		                	"csa_name_key": "Fully customized VM (1.0.0)"
-		              	 },
-		              	 "id": "8a83d7a44f280299014f2b952603012f",
-		              	 "owner": "bcsguser",
-		              	 "image": "csa/images/library/infrastructure.png",
-		              	 "status": "ACTIVE",
-		              	 "catalogId": "8a83d7a44f1d0f21014f23000f8816df",
-		              	 "serviceId": "8a83d7a44f1d0f21014f1d37683608a1",
-		              	 "serviceImage": "/csa/images/library/infrastructure.png",
-		              	 "serviceName": "Fully customized VM",
-		              	 "cancelable": true,
-		              	 "transferable": false,
-		              	 "modifiable": false,
-		              	 "modifiableOptions": false,
-		              	 "reorderable": false,
-		              	 "deletable": false,
-		              	 "subscriptionTerm": {
-		                	"startDate": "2015-08-14T07:40:31.000Z"
-		              	 },
-		              	"initPrice": {
-		                	"currency": "USD",
-		                	"price": 0
-		              	},
-		              	"recurringPrice": {
-		                	"currency": "USD",
-		                	"price": 0,
-		                	"basedOn": "Yearly"
-		              	},
-		              	"requestId": null,
-		              	"showViewRequest": true,
-		              	"instanceState": "ACTIVE",
-		              	"offeringVersion": "1.0.0",
-		              	"hideInitialPrice": false,
-		              	"hideRecurringPrice": false
-		            },
-		            {
-		                "@self": "/csa/api/mpp/mpp-subscription/8a83d7a44f280299014f5f2b8ad40867",
-		                "@type": "urn:x-hp:2012:software:cloud:data_model:service-subscription",
-		                "name": "sampleRequest",
-		                "ext": {
-		                  "csa_name_key": "sampleRequest"
-		                },
-		                "id": "8a83d7a44f280299014f5f2b8ad40867",
-		                "owner": "bcsguser",
-		                "image": "csa/images/library/infrastructure.png",
-		                "status": "ACTIVE",
-		                "catalogId": "8a83d7a44f1d0f21014f23000f8816df",
-		                "serviceId": "8a83d7a44f1d0f21014f1d37683608a1",
-		                "serviceImage": "/csa/images/library/infrastructure.png",
-		                "serviceName": "Fully customized VM",
-		                "cancelable": true,
-		                "transferable": false,
-		                "modifiable": false,
-		                "modifiableOptions": false,
-		                "reorderable": false,
-		                "deletable": false,
-		                "subscriptionTerm": {
-		                  "startDate": "2015-06-21T05:32:17.000Z",
-		                  "endDate": "2016-06-23T05:32:17.000Z"
-		                },
-		                "initPrice": {
-		                  "currency": "USD",
-		                  "price": 0
-		                },
-		                "recurringPrice": {
-		                  "currency": "USD",
-		                  "price": 0,
-		                  "basedOn": "Yearly"
-		                },
-		                "requestId": null,
-		                "showViewRequest": true,
-		                "instanceState": "ACTIVE",
-		                "offeringVersion": "1.0.0",
-		                "hideInitialPrice": false,
-		                "hideRecurringPrice": false
-		              }
-		       ]
-		 }
+    	var jsonArray = <%=jsonArray%>
 		
 		function fnProdDetails(this_Obj) {
 			var thisObj = $(this_Obj);
 			var prodid=thisObj.attr("id");
 			var id=prodid.substring("prodid".length);
-			var dateString = jsonNew.members[id].subscriptionTerm.startDate;
+			var dateString = jsonArray.members[id].subscriptionTerm.startDate;
 			var dateArray = dateString.split('-');
 			var dateStr = dateArray[2].substring(0,2) + "/" +
 						  dateArray[1] + "/" + dateArray[0]; 
 			$('#prodSubDate').html(dateStr);
- 			$('#prodCategory').html(jsonNew.members[id].serviceName);
-			$('#prodVerson').html(jsonNew.members[id].offeringVersion);
-			$('#prodPrice').html('&#36;'+jsonNew.members[id].initPrice.price);
-			$('#prodRecPrice').html('&#36;'+jsonNew.members[id].recurringPrice.price);
+ 			$('#prodCategory').html(jsonArray.members[id].serviceName);
+			$('#prodVerson').html(jsonArray.members[id].offeringVersion);
+			$('#prodPrice').html('&#36;'+jsonArray.members[id].initPrice.price);
+			$('#prodRecPrice').html('&#36;'+jsonArray.members[id].recurringPrice.price);
 			$('#prod-details').on('show.bs.mocdal', centerModal);
 			$('#prod-details').modal("show");	
 				
@@ -147,7 +56,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 			$('#prod-details').on('show.bs.modal', centerModal);
 
 			var returnedData = '';
-	    	$.each(jsonNew.members,function(y,z){
+	    	$.each(jsonArray.members,function(y,z){
 	    		if(z.status.toLowerCase() == 'ACTIVE'.toLowerCase()) {
 		    		returnedData += '<div class="row greyspace billing-item">';
 		    		returnedData += '<div class="col-sm-3">';
@@ -210,22 +119,30 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 	<div id="cancelSucessMsg" class="displayNone">
 		<div class="message-green margin-top-forty">
 			<h5 class="center">
-				<span class="glyphicon glyphicon-ok green" style="margin-right:5px"></span>
-				Your <b>Fully customized VM </b> service has been cancelled successfully.
+				<span class="glyphicon glyphicon-ok green"></span>
+				&nbsp;&nbsp;&nbsp;Your <b>Fully customized VM </b> service has been cancelled successfully.
 			</h5>
 		</div>
 	</div>	
 	
+	<logic:present name="error" scope="request">
+		<div id="suvscirbeErrMsg" class="padding-top-thirty">
+			<div class="message">
+				<h5 class="center">
+					<span class="glyphicon glyphicon-exclamation-sign red"></span>
+					&nbsp;&nbsp;&nbsp;
+					Error while creating subscription
+				</h5>
+			</div>
+		</div>
+	</logic:present>
+	 
 	<div class="container padding-top-thirty">
     	<div class="row">
         	<div class="col-sm-12">
-        	<logic:present name="error" scope="request">
-					<strong>
-					Error while creating subscription
-					</strong>
-				</logic:present> 
+        	
           		<h1 class="payment-select">
-          			Application Details
+          			Subscription Details
           		</h1>
           		<hr>
           		<div class="row billing-title">

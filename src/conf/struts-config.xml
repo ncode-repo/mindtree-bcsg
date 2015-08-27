@@ -9,6 +9,7 @@
     <form-beans>
      <form-bean name="UserDetailsForm" type="com.subscribe.UserDetailsActionForm"/>
      <form-bean name="SubscribeForm" type="com.subscribe.SubscribeActionForm"/>
+     <form-bean name="LoginForm" type="com.subscribe.LoginForm"/>
     </form-beans>
 	<!-- ============ Action Mapping Definitions -->
 	<action-mappings>
@@ -29,7 +30,10 @@
 		
 		<action path="/appSus" forward="/WEB-INF/content/pages/serviceSuccess.jsp"></action>
 		
-		<action path="/login" forward="/WEB-INF/content/pages/dashboard.jsp"></action>
+		<action path="/login" scope="request" name="LoginForm" type="com.actions.LoginAction">
+		<forward name="success"  path="/WEB-INF/content/pages/dashboard.jsp" />
+		<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
+		</action>
 		
 		
 	</action-mappings>

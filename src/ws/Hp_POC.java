@@ -70,7 +70,8 @@ public class Hp_POC {
 			JSONObject token = result.getJSONObject("token");
 			String token_id = token.getString("id");
 			System.out.println("Token ID: " + token_id);
-			listSvcOfferings(token_id, "");
+			cancelSubscription(token_id, "8a83d7a44f280299014f6ef449115bc3", "8a83d7a44f1d0f21014f23000f8816df");
+			//listSvcOfferings(token_id, "");
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 		}
@@ -207,9 +208,9 @@ public static String generateToken(){
 		s.append("Content-Disposition: form-data; name=\"requestForm\" \n\n");
 		try {
 			json.put("categoryName",categoryName);
-			json.put("subscriptionName", "NEW_TEST1");
-			json.put("startDate", "2015-08-21T05:32:17.000Z");
-			json.put("endDate", "2015-09-24T05:32:17.000Z");
+			json.put("subscriptionName", "Login");
+			json.put("startDate", "2015-09-21T05:32:17.000Z");
+			json.put("endDate", "2015-10-24T05:32:17.000Z");
 			fields.put("field_8a83d7a44f1d0f21014f1d37689308ad", "win2008");
 			fields.put("field_8a83d7a44f1d0f21014f1d37689308e3", 1);
 			fields.put("field_8a83d7a44f1d0f21014f1d3768a308fd", 2048);
@@ -310,7 +311,7 @@ public static String generateToken(){
 			result = wsResponse.getEntity(JSONObject.class);
 			cancel_id  = result.getString("id");
 			}
-			System.out.println("Offerings Details: " + result.toString());
+			System.out.println("Cancellation id: " + result.toString());
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 			System.out.println("Response message:" + wsResponse.toString());

@@ -2,12 +2,12 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
-<%@ page import="com.subscribe.UserDetailsActionForm"%>
+<%@ page import="com.subscribe.LoginForm"%>
 <%@ page import="org.codehaus.jettison.json.JSONObject"%>
 <html>
 <%
-UserDetailsActionForm userDetails = (UserDetailsActionForm) session.getAttribute("userDetails");
-JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
+LoginForm userDetails = (LoginForm) session.getAttribute("login_details");
+JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 %>
 <head>
 	<title> Product  Details </title>

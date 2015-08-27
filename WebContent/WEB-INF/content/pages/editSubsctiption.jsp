@@ -23,10 +23,18 @@
 		</div>
 	</header>
 
-	
 	<div class="container padding-top-thirty margin-top-twenty">
     	<div class="row">
-			<table class="table table-bordered">
+       		<h1 class="payment-select">
+       			Subscription Details
+       		</h1>
+       		<hr>
+       	</div>
+     </div>
+	<div class="container padding-top-thirty">
+    	<div class="row">
+       		
+			<table class="table table-bordered ">
 		    <thead>
 		        <tr>
 		            <th>Row</th>
@@ -56,14 +64,7 @@
 		            <td>4</td>
 		            <td>HDD_SIZE </td>
 		            <td>
-		            	
-		            	<select class="form-control" style="width:120px">
-		            		<option>30 (GB)</option>
-		            		<option>40 (GB)</option>
-		            		<option>80 (GB)</option>
-		            		<option>1 (TB)</option>
-		            		<option>2 (TB)</option>
-		            	</select>
+		            	30 (GB)
 		            </td>
 		        </tr>
 		        <tr>
@@ -89,12 +90,7 @@
 		            <td>8</td>
 		            <td>MEMORYINMB  </td>
 		            <td>
-		            
-		            <select class="form-control" style="width:120px">
-		            		<option>512 MB</option>
-		            		<option>1 (TB)</option>
-		            		
-		            	</select>
+		            512 MB
 		            </td>
 		        </tr>
 		        
@@ -109,7 +105,13 @@
 		        <tr>
 		            <td>10</td>
 		            <td>NCPU   </td>
-		            <td>1 (Number of CPUs)</td>
+		            <td>
+		            	<select class="form-control" style="width:90px">
+		            		<option value="1">1</option>
+		            		<option value="2">2</option>
+		            		<option value="4">4</option>
+		            	</select>
+		            </td>
 		        </tr>
 		        
 		        
@@ -130,13 +132,8 @@
 		            <td>13</td>
 		            <td>RECURRENCE   </td>
 		            <td>
-		            
-		            	<select class="form-control" style="width:120px">
-		            		<option>Weekly</option>
-		            		<option>Monthly</option>
-		            		<option>Yealy</option>
-		            		
-		            	</select>
+		           	 Weekly
+		            	
 		            </td>
 		        </tr>
 		        

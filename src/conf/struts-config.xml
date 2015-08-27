@@ -20,8 +20,17 @@
 		
 		<action path="/getAppsDet" name="SubscribeForm" type="com.actions.SubscribeAction" >
 		<forward name="failure"  path="/WEB-INF/content/pages/appDetails.jsp" />
-		<forward name="success"  path="/WEB-INF/content/pages/index.jsp" />
+		<forward name="success"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 		</action>
+		
+		<action path="/editSub" forward="/WEB-INF/content/pages/editSubsctiption.jsp"></action>
+		
+		<action path="/manSub" forward="/WEB-INF/content/pages/manageSubsctiption.jsp"></action>
+		
+		<action path="/appSus" forward="/WEB-INF/content/pages/serviceSuccess.jsp"></action>
+		
+		<action path="/login" forward="/WEB-INF/content/pages/dashboard.jsp"></action>
+		
 		
 	</action-mappings>
 	<message-resources

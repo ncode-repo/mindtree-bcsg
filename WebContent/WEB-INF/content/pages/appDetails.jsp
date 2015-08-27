@@ -19,160 +19,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="ui/js/profDetails.js"></script>
     <script type="text/javascript">
-    var jsonNew = <%=jsonArray.toString()%>;
-		var jsonResults = 
-		{ "@type":"urn:x-hp:2012:software:cloud:data_model:service-offering:collection",
-		  "@total_results":1,
-		  "@start_index":0,
-		  "@items_per_page":1,
-		  "members":[
-		             {
-		            	 "id":"8a83d7a44f1d0f21014f1d37683608a1",
-		              	 "catalogId":"8a83d7a44f1d0f21014f23000f8816df",
-		              	 "catalogName":"BCSG Catalog",
-		                 "name":"Fully_customized_VM_9d4a57e2-7eb4-42b7-bfa7-54222af7cb64",
-		                 "displayName":"Fully customized VM",
-		              	 "offeringVersion":"1.0.0",
-		              	 "hideInitialPrice":false,
-		              	 "hideRecurringPrice":false,
-		              	 "category":
-		              	  {
-		            	  	"displayName":"Simple System",
-		            	  	"name":"SIMPLE_SYSTEM"
-		              	  },
-		              	  "image":"csa\/images\/library\/infrastructure.png",
-		              	  "requireApproval":false,
-		              	  "publishedDate":"2015-08-12T17:54:39.578Z",
-		              	  "initPrice":
-		              	  {
-		            	   	"currency":"USD",
-		            	  	"price":10
-		              	  },
-		              	  "recurringPrice":
-		              	  {
-		            	  	"currency":"USD",
-		            	  	"price":15,
-		            	  	"basedOn":"Yearly"
-		             	  }
-		           	},
-		             {
-		            	 "id":"8a83d7a44f1d0f21014f1d37683608a1",
-		              	 "catalogId":"8a83d7a44f1d0f21014f23000f8816df",
-		              	 "catalogName":"BCSG Catalog",
-		                 "name":"Fully_customized_VM_9d4a57e2-7eb4-42b7-bfa7-54222af7cb64",
-		                 "displayName":"Fully customized VM 2",
-		              	 "offeringVersion":"1.2.0",
-		              	 "hideInitialPrice":false,
-		              	 "hideRecurringPrice":false,
-		              	 "category":
-		              	  {
-		            	  	"displayName":"Simple System",
-		            	  	"name":"SIMPLE_SYSTEM"
-		              	  },
-		              	  "image":"csa\/images\/library\/infrastructure.png",
-		              	  "requireApproval":false,
-		              	  "publishedDate":"2015-08-12T17:54:39.578Z",
-		              	  "initPrice":
-		              	  {
-		            	   	"currency":"USD",
-		            	  	"price":20
-		              	  },
-		              	  "recurringPrice":
-		              	  {
-		            	  	"currency":"USD",
-		            	  	"price":25,
-		            	  	"basedOn":"Yearly"
-		             	  }
-		           	},
-		           	{
-		            	 "id":"8a83d7a44f1d0f21014f1d37683608a1",
-		              	 "catalogId":"8a83d7a44f1d0f21014f23000f8816df",
-		              	 "catalogName":"BCSG Catalog",
-		                 "name":"Fully_customized_VM_9d4a57e2-7eb4-42b7-bfa7-54222af7cb64",
-		                 "displayName":"Fully customized VM 3",
-		              	 "offeringVersion":"1.3.0",
-		              	 "hideInitialPrice":false,
-		              	 "hideRecurringPrice":false,
-		              	 "category":
-		              	  {
-		            	  	"displayName":"Simple System",
-		            	  	"name":"SIMPLE_SYSTEM"
-		              	  },
-		              	  "image":"csa\/images\/library\/infrastructure.png",
-		              	  "requireApproval":false,
-		              	  "publishedDate":"2015-08-12T17:54:39.578Z",
-		              	  "initPrice":
-		              	  {
-		            	   	"currency":"USD",
-		            	  	"price":30
-		              	  },
-		              	  "recurringPrice":
-		              	  {
-		            	  	"currency":"USD",
-		            	  	"price":35,
-		            	  	"basedOn":"Yearly"
-		             	  }
-		           	},
-		           	{
-		            	 "id":"8a83d7a44f1d0f21014f1d37683608a1",
-		              	 "catalogId":"8a83d7a44f1d0f21014f23000f8816df",
-		              	 "catalogName":"BCSG Catalog",
-		                 "name":"Fully_customized_VM_9d4a57e2-7eb4-42b7-bfa7-54222af7cb64",
-		                 "displayName":"Fully customized VM 4",
-		              	 "offeringVersion":"1.4.0",
-		              	 "hideInitialPrice":false,
-		              	 "hideRecurringPrice":false,
-		              	 "category":
-		              	  {
-		            	  	"displayName":"Simple System",
-		            	  	"name":"SIMPLE_SYSTEM"
-		              	  },
-		              	  "image":"csa\/images\/library\/infrastructure.png",
-		              	  "requireApproval":false,
-		              	  "publishedDate":"2015-08-12T17:54:39.578Z",
-		              	  "initPrice":
-		              	  {
-		            	   	"currency":"USD",
-		            	  	"price":40
-		              	  },
-		              	  "recurringPrice":
-		              	  {
-		            	  	"currency":"USD",
-		            	  	"price":45,
-		            	  	"basedOn":"Yearly"
-		             	  }
-		           	},
-		           	{
-		            	 "id":"8a83d7a44f1d0f21014f1d37683608a1",
-		              	 "catalogId":"8a83d7a44f1d0f21014f23000f8816df",
-		              	 "catalogName":"BCSG Catalog",
-		                 "name":"Fully_customized_VM_9d4a57e2-7eb4-42b7-bfa7-54222af7cb64",
-		                 "displayName":"Fully customized VM 1.5",
-		              	 "offeringVersion":"1.5.0",
-		              	 "hideInitialPrice":false,
-		              	 "hideRecurringPrice":false,
-		              	 "category":
-		              	  {
-		            	  	"displayName":"Simple System",
-		            	  	"name":"SIMPLE_SYSTEM"
-		              	  },
-		              	  "image":"csa\/images\/library\/infrastructure.png",
-		              	  "requireApproval":false,
-		              	  "publishedDate":"2015-08-12T17:54:39.578Z",
-		              	  "initPrice":
-		              	  {
-		            	   	"currency":"USD",
-		            	  	"price":50
-		              	  },
-		              	  "recurringPrice":
-		              	  {
-		            	  	"currency":"USD",
-		            	  	"price":55,
-		            	  	"basedOn":"Yearly"
-		             	  }
-		           	}
-		       ]
-		 }
+    	var jsonNew = <%=jsonArray.toString()%>;
 		
 		function fnProdDetails(this_Obj) {
 			var thisObj = $(this_Obj);
@@ -199,17 +46,11 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 		    $dialog.css("margin-top", offset);
 		}
 		
-		
-
-
-		
 		$(window).on("resize", function () {
 		    $('.modal:visible').each(centerModal);
 		});
 		
-		$(document).ready(function() {
-			
-
+		$(document).ready(function() {		
 			var returnedData = '';
 	    	$.each(jsonNew.members,function(y,z){
 	    		returnedData += '<div class="row greyspace billing-item">';
@@ -230,10 +71,9 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 	    		returnedData += '</div>';
     		});
 	    	$('#resposediv').append(returnedData);
-	    	 $("input[name='prodsel']").click(function() { 
+	    	$("input[name='prodsel']").click(function() { 
                  checkCkbox(); 
-         });
-			
+         	});
 		});
 		function checkCkbox() {
             var numChkd = $("input[name='prodsel']:checked").length;
@@ -289,7 +129,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 				</div>		  
 	           <div class="row margin-bottom-eighty">
 	           		<div class="col-sm-12 no-padding">
-	           			<input type="button" disabled="disabled" id="continueButton" class="btn btn-primary" name="continueUser" value="Continue User">
+	           			<input type="button" disabled="disabled" id="continueButton" class="btn btn-primary" name="continueUser" value="Subscribe">
 	           		</div>
 	           </div>
 	           </form>
@@ -306,7 +146,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 	                <h2 class="modal-title" >Product Details</h2>
 	            </div>
 	            <div class="modal-body">
-	                <table class="table table-condensed">
+	                <table class="table table-bordered">
 	                    <tbody>
 	                        <tr style="border-top-width: 0px;">
 	                            <td>Category</td>

@@ -1,5 +1,6 @@
 package ws.response.parser;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -40,4 +41,37 @@ public static SubscribeActionForm parseJson(JSONObject result,int index){
 	}
 	return form;
 }
+
+public static JSONArray parseJson(JSONObject result,ArrayList<String> subIds){
+	int records = 0;
+	JSONArray sub_members= new JSONArray();
+	Iterator<String> i =result.keys();
+	while(i.hasNext()){
+		try {
+			String key = i.next();
+			   if(key.equalsIgnoreCase(JsonConstants.TOTAL_RESULTS))
+			   records = (Integer) result.get(key);
+			  if(key.equalsIgnoreCase(JsonConstants.MEMBERS)){
+				  JSONArray members  = (JSONArray) result.get(key);
+				  for(int k=0;k<members.length();k++){
+						  JSONObject j=  members.getJSONObject(k);
+						  Iterator lst =   subIds.iterator();
+						  while(lst.hasNext()){
+							  if(j.getString("id").equalsIgnoreCase((String)lst.next())){
+								  sub_members.put(j);  
+							  }
+						  }
+						/*  form.setSvcId((String)j.get("id"));  
+						  form.setCatalogId((String)j.get("catalogId"));
+						  form.setCategoryName(j.getJSONObject("category").getString("name"));*/
+				  }
+			  }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	return sub_members;
+}
+
 }

@@ -194,24 +194,27 @@ public static String generateToken(){
 		}
 	}
 
-	public static void createSubscription(String token,String id,String catalogId,String categoryName){
-		JSONObject json = new JSONObject(); 
+	public static String createSubscription(String token,String id,String catalogId,String categoryName){
+		JSONObject json = new JSONObject();
+		JSONObject fields = new JSONObject(); 
 		Client client = Client.create();
 		StringBuilder s = new StringBuilder();
 		StringBuilder uri = new StringBuilder();
 		uri.append("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-request/");
 		uri.append(id+"?catalogId=");
 		uri.append(catalogId);
-		s.append("--Abcdefgh ");
-		s.append("\n Content-Disposition: form-data; name=\"requestForm\" ");
+		s.append("--Abcdefgh \n");
+		s.append("Content-Disposition: form-data; name=\"requestForm\" \n\n");
 		try {
 			json.put("categoryName",categoryName);
-			json.put("subscriptionName", "NEW_TEST");
+			json.put("subscriptionName", "NEW_TEST1");
 			json.put("startDate", "2015-08-21T05:32:17.000Z");
-			Calendar c = Calendar.getInstance();
-					c.add(Calendar.MONTH, 1);
 			json.put("endDate", "2015-09-24T05:32:17.000Z");
-			json.put("fields", "");
+			fields.put("field_8a83d7a44f1d0f21014f1d37689308ad", "win2008");
+			fields.put("field_8a83d7a44f1d0f21014f1d37689308e3", 1);
+			fields.put("field_8a83d7a44f1d0f21014f1d3768a308fd", 2048);
+			fields.put("field_8a83d7a44f1d0f21014f1d3768a3091a", "Gold");
+			json.put("fields", fields);
 			json.put("action", "ORDER");
 			s.append(json.toString()+"\n --Abcdefgh--");
 			System.out.println("Request body: " + s.toString());
@@ -228,13 +231,92 @@ public static String generateToken(){
 				.type(MediaType.MULTIPART_FORM_DATA+";boundary=Abcdefgh")
 				.header("Authorization", authorization)
 				.header("X-Auth-token", token).post(ClientResponse.class,s.toString());
+		JSONObject result = new JSONObject();
+		String sub_id = "";
 		try {
-			JSONObject result = wsResponse.getEntity(JSONObject.class);
+			if(wsResponse.getStatus()==200){
+			result = wsResponse.getEntity(JSONObject.class);
+			sub_id  = result.getString("id");
+			}
 			System.out.println("Offerings Details: " + result.toString());
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
 			System.out.println("Response message:" + wsResponse.toString());
 		}
+	return sub_id;
 	}
+
+	public static JSONObject getSubscriptionList(String token){
+		JSONObject json = new JSONObject();
+		Client client = Client.create();
+		try {
+			json.put("status", "ACTIVE");
+			System.out.println("Request body: " + json.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		WebResource webResource = client
+				.resource("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-subscription/filter");
+		String authorization = "idmTransportUser" + ":" + "idmTransportUser";
+		authorization = headerAuth(authorization);
+		ClientResponse wsResponse = webResource
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON)
+				.header("Authorization", authorization)
+				.header("X-Auth-token", token).post(ClientResponse.class, json);
+		JSONObject result = null;
+		try {
+			result = wsResponse.getEntity(JSONObject.class);
+			//JSONArray members = JsonParser.parseJson(result);
+			System.out.println("Subscription List: " + result.toString());
+			//getOfferingDetails(token,members,"SIMPLE_SYSTEM");
+		} catch (Exception e) {
+			System.out.println("Exception message: " + e.getMessage());
+			System.out.println("Response message:" + wsResponse.toString());
+		}
+		return result;
+	}
+
+	public static String cancelSubscription(String token,String sub_id,String catalogId){
+		JSONObject json = new JSONObject();
+		Client client = Client.create();
+		StringBuilder s = new StringBuilder();
+		StringBuilder uri = new StringBuilder();
+		uri.append("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-request/");
+		uri.append(sub_id+"?catalogId=");
+		uri.append(catalogId);
+		s.append("--Abcdefgh \n");
+		s.append("Content-Disposition: form-data; name=\"requestForm\" \n\n");
+		try {
+			json.put("action", "CANCEL_SUBSCRIPTION");
+			s.append(json.toString()+"\n --Abcdefgh--");
+			System.out.println("Request body: " + s.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		WebResource webResource = client
+				.resource(uri.toString());
+		String authorization = "idmTransportUser" + ":" + "idmTransportUser";
+		authorization = headerAuth(authorization);
+		ClientResponse wsResponse = webResource
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.MULTIPART_FORM_DATA+";boundary=Abcdefgh")
+				.header("Authorization", authorization)
+				.header("X-Auth-token", token).post(ClientResponse.class,s.toString());
+		JSONObject result = new JSONObject();
+		String cancel_id = "";
+		try {
+			if(wsResponse.getStatus()==200){
+			result = wsResponse.getEntity(JSONObject.class);
+			cancel_id  = result.getString("id");
+			}
+			System.out.println("Offerings Details: " + result.toString());
+		} catch (Exception e) {
+			System.out.println("Exception message: " + e.getMessage());
+			System.out.println("Response message:" + wsResponse.toString());
+		}
+	return cancel_id;
+	}
+
 
 }

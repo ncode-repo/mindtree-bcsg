@@ -117,9 +117,11 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 			var prodid=thisObj.attr("id");
 			var id=prodid.substring("prodid".length);
 			var dateString = jsonNew.members[id].subscriptionTerm.startDate;
-			var dateformat= new Date(Date.parse(dateString));
-			console.log(" dateString " +dateString.split('-'));
-			$('#prodCategory').html(jsonNew.members[id].serviceName);
+			var dateArray = dateString.split('-');
+			var dateStr = dateArray[2].substring(0,2) + "/" +
+						  dateArray[1] + "/" + dateArray[0]; 
+			$('#prodSubDate').html(dateStr);
+ 			$('#prodCategory').html(jsonNew.members[id].serviceName);
 			$('#prodVerson').html(jsonNew.members[id].offeringVersion);
 			$('#prodPrice').html('&#36;'+jsonNew.members[id].initPrice.price);
 			$('#prodRecPrice').html('&#36;'+jsonNew.members[id].recurringPrice.price);
@@ -142,12 +144,10 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 		});
 		
 		$(document).ready(function() {
-			
+			$('#prod-details').on('show.bs.modal', centerModal);
 
 			var returnedData = '';
 	    	$.each(jsonNew.members,function(y,z){
-	    		
-	    		
 	    		if(z.status.toLowerCase() == 'ACTIVE'.toLowerCase()) {
 		    		returnedData += '<div class="row greyspace billing-item">';
 		    		returnedData += '<div class="col-sm-3">';
@@ -173,6 +173,10 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 	    	$("input[name='prodsel']").click(function() { 
                  checkCkbox(); 
          	});
+	    	
+	    	$('#cancelSubscription').click(function() {
+	    		$('#cancelSucessMsg').show();
+	    	});
 			
 		});
 		function checkCkbox() {
@@ -203,6 +207,14 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 		</div>
 	</header>
 	
+	<div id="cancelSucessMsg" class="displayNone">
+		<div class="message-green margin-top-forty">
+			<h5 class="center">
+				<span class="glyphicon glyphicon-ok green" style="margin-right:5px"></span>
+				Your <b>Fully customized VM </b> service has been cancelled successfully.
+			</h5>
+		</div>
+	</div>	
 	
 	<div class="container padding-top-thirty">
     	<div class="row">

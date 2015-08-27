@@ -51,6 +51,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 		});
 		
 		$(document).ready(function() {		
+			$('#prod-details').on('show.bs.mocdal', centerModal);
 			var returnedData = '';
 	    	$.each(jsonNew.members,function(y,z){
 	    		returnedData += '<div class="row greyspace billing-item">';
@@ -74,6 +75,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 	    	$("input[name='prodsel']").click(function() { 
                  checkCkbox(); 
          	});
+	    	$("#continueButton").attr('disabled', true);
 		});
 		function checkCkbox() {
             var numChkd = $("input[name='prodsel']:checked").length;

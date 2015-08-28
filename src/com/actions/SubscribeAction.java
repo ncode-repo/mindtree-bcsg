@@ -39,6 +39,7 @@ public class SubscribeAction extends Action{
 		 String user_id=StoreDataDAO.getUserId(userDetailsForm.getUserEmail());
 		 if(user_id==null){
 			 row_count = StoreDataDAO.storeUserDetails(userDetailsForm,sub_id);
+			 user_id=StoreDataDAO.getUserId(userDetailsForm.getUserEmail());
 		 }
 			 if(row_count>0||user_id!=null){
 			

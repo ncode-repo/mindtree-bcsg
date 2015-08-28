@@ -8,6 +8,7 @@
 <%
 LoginForm userDetails = (LoginForm) session.getAttribute("login_details");
 JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
+String cancel_id = (String)session.getAttribute("cancel_id");
 %>
 <head>
 	<title> Product  Details </title>
@@ -17,7 +18,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 	<script type="text/javascript" src="ui/js/jquery.1.9.0.js"></script>
 	<script type="text/javascript" src="ui/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
-    
+    <script type="text/javascript" src="ui/js/profDetails.js"></script>
     <script type="text/javascript">
     	var jsonArray = <%=jsonArray%>
 		
@@ -115,8 +116,8 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 		  	</div>
 		</div>
 	</header>
-	
-	<div id="cancelSucessMsg" class="displayNone">
+	<%if(cancel_id!=null){ %>
+	<div id="cancelSucessMsg">
 		<div class="message-green margin-top-forty">
 			<h5 class="center">
 				<span class="glyphicon glyphicon-ok green"></span>
@@ -124,7 +125,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 			</h5>
 		</div>
 	</div>	
-	
+	<%} %>
 	<logic:present name="error" scope="request">
 		<div id="suvscirbeErrMsg" class="padding-top-thirty">
 			<div class="message">
@@ -156,13 +157,14 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
               			Other Service Details 
             		</div>
           		</div>
-          		<form name="services" action="getAppsDet.do" id="servicesForm"  method="post">
+          		<form name="services" action="cancel.do" id="servicesForm"  method="post">
 				<div class="row" id="resposediv">
 				  
 				</div>		  
 	           <div class="row margin-bottom-eighty">
 	           		<div class="col-sm-12 no-padding">
 	           			<input type="button" disabled="disabled" id="editSubscription" class="btn btn-primary" name="editSubscription" value="Edit Subscription">
+	           			<input type="hidden" value="modify_page" id="event" name="event"/>
 	           			<input type="button" disabled="disabled" id="cancelSubscription" class="btn btn-primary margin-left-twenty" name="cancelSubscription" value="Cancel Subscription">
 	           		</div>
 	           </div>

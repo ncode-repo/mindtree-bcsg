@@ -11,6 +11,21 @@ $(document).ready(function() {
 			//alert(" Last Form");	
 			$('#servicesForm').submit();
 	});
+	$('#cancelSubscription').click(function(){
+		//alert(" Last Form");
+		$('#event').val("abc");
+		$('#servicesForm').submit();
+});
+	$('#editSubscription').click(function(){
+		//alert(" Last Form");
+		//$('#servicesForm').attr("action","editSub.do");
+		
+		$('#servicesForm').submit();
+});
+	$('#saveSubscritption').click(function(){
+		//alert(" Last Form");	
+		$('#editForm').submit();
+});
 });
 
 function validateForm() {

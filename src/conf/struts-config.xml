@@ -10,6 +10,7 @@
      <form-bean name="UserDetailsForm" type="com.subscribe.UserDetailsActionForm"/>
      <form-bean name="SubscribeForm" type="com.subscribe.SubscribeActionForm"/>
      <form-bean name="LoginForm" type="com.subscribe.LoginForm"/>
+      <form-bean name="CancelActionForm" type="com.subscribe.CancelActionForm"/>
     </form-beans>
 	<!-- ============ Action Mapping Definitions -->
 	<action-mappings>
@@ -30,11 +31,16 @@
 		
 		<action path="/appSus" forward="/WEB-INF/content/pages/serviceSuccess.jsp"></action>
 		
-		<action path="/login" scope="request" name="LoginForm" type="com.actions.LoginAction">
+		<action path="/login" scope="session" name="LoginForm" type="com.actions.LoginAction">
 		<forward name="success"  path="/WEB-INF/content/pages/dashboard.jsp" />
 		<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 		</action>
-		
+		<action path="/cancel" scope="request" name="CancelActionForm" type="com.actions.CancelSubscriptionAction">
+		<forward name="success"  path="/login.do" />
+		<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
+		<forward name="modify"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
+		<forward name="successm"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
+		</action>
 		
 	</action-mappings>
 	<message-resources

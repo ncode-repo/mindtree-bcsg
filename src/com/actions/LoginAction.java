@@ -41,7 +41,7 @@ public class LoginAction extends Action{
 			session.setAttribute("token", token_id);
 			members = Hp_POC.getSubscriptionList(token_id);
 		}
-		JSONArray result = JsonParser.parseJson(members,subIds);
-		return members;
+		JSONObject result = JsonParser.parseJson(members,subIds);
+		return result;
 	}
 }

@@ -70,7 +70,7 @@ public class Hp_POC {
 			JSONObject token = result.getJSONObject("token");
 			String token_id = token.getString("id");
 			System.out.println("Token ID: " + token_id);
-			cancelSubscription(token_id, "8a83d7a44f280299014f6ef449115bc3", "8a83d7a44f1d0f21014f23000f8816df");
+			modifySubscription(token_id, "8a83d7a44f280299014f6a3f17f13c4b", "8a83d7a44f1d0f21014f23000f8816df","2");
 			//listSvcOfferings(token_id, "");
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
@@ -318,6 +318,52 @@ public static String generateToken(){
 		}
 	return cancel_id;
 	}
+	public static String modifySubscription(String token,String sub_id,String catalogId,String cpus){
+		JSONObject json = new JSONObject();
+		JSONObject fields = new JSONObject();
+		Client client = Client.create();
+		StringBuilder s = new StringBuilder();
+		StringBuilder uri = new StringBuilder();
 
+		uri.append("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-request/");
+		uri.append(sub_id+"?catalogId=");
+		uri.append(catalogId);
+		s.append("--Abcdefgh \n");
+		s.append("Content-Disposition: form-data; name=\"requestForm\" \n\n");
+		try {
+			json.put("subscriptionName", "sampleRequest");
+			json.put("subscriptionDescription", "Sample");
+			json.put("fields", fields);
+			fields.put("field_08A6B20A_22AB_1E71_A6A2_0EF6568BA6C3_group", true);
+			fields.put("field_69a7a604_1169_4622_b14f_dd66b124e099", cpus);
+			json.put("action", "MODIFY_SUBSCRIPTION");
+			s.append(json.toString()+"\n --Abcdefgh--");
+			System.out.println("Request body: " + s.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		WebResource webResource = client
+				.resource(uri.toString());
+		String authorization = "idmTransportUser" + ":" + "idmTransportUser";
+		authorization = headerAuth(authorization);
+		ClientResponse wsResponse = webResource
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.MULTIPART_FORM_DATA+";boundary=Abcdefgh")
+				.header("Authorization", authorization)
+				.header("X-Auth-token", token).post(ClientResponse.class,s.toString());
+		JSONObject result = new JSONObject();
+		String modify_id = "";
+		try {
+			if(wsResponse.getStatus()==200){
+			result = wsResponse.getEntity(JSONObject.class);
+			modify_id  = result.getString("id");
+			}
+			System.out.println("Modification id: " + result.toString());
+		} catch (Exception e) {
+			System.out.println("Exception message: " + e.getMessage());
+			System.out.println("Response message:" + wsResponse.toString());
+		}
+	return modify_id;
+	}
 
 }

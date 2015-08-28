@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import ws.JsonConstants;
@@ -42,9 +43,10 @@ public static SubscribeActionForm parseJson(JSONObject result,int index){
 	return form;
 }
 
-public static JSONArray parseJson(JSONObject result,ArrayList<String> subIds){
+public static JSONObject parseJson(JSONObject result,ArrayList<String> subIds){
 	int records = 0;
 	JSONArray sub_members= new JSONArray();
+	JSONObject new_members = new JSONObject();
 	Iterator<String> i =result.keys();
 	while(i.hasNext()){
 		try {
@@ -71,7 +73,13 @@ public static JSONArray parseJson(JSONObject result,ArrayList<String> subIds){
 			e.printStackTrace();
 		}
 	}
-	return sub_members;
+	try {
+		new_members.put("members", sub_members);
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return new_members;
 }
 
 }

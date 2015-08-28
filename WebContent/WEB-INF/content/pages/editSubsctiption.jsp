@@ -106,11 +106,14 @@
 		            <td>10</td>
 		            <td>NCPU   </td>
 		            <td>
-		            	<select class="form-control" style="width:90px">
+		            <form name="services" action="cancel.do" id="editForm"  method="post">
+		            	<select id="cpu" name="cpu" class="form-control" style="width:90px">
 		            		<option value="1">1</option>
 		            		<option value="2">2</option>
 		            		<option value="4">4</option>
 		            	</select>
+		            	<input type="hidden" value="modify" id="event" name="event"/>
+		            	</form>
 		            </td>
 		        </tr>
 		        
@@ -160,7 +163,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-4 no-padding">
-				<input type="button" value="Save Subscritption" class="btn btn-primary no-margin-top no-margin-bottom" />;
+				<input type="button" id="saveSubscritption" value="Save Subscritption" class="btn btn-primary no-margin-top no-margin-bottom" />;
 				<input type="button" value="Cancel" class="btn btn-primary no-margin-top  margin-left-ten no-margin-bottom" />;
 			</div>
 			<div class="col-sm-4">

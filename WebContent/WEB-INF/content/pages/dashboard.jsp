@@ -184,6 +184,16 @@ String cancel_id = (String)session.getAttribute("cancel_id");
 	 
 	 
 	<div class="container padding-top-thirty displayNone" id="memberList">
+		
+		<div id="serviceUpdateMsg" class="displayNone">
+			<div class="message-green margin-top-forty">
+				<h5 class="center">
+					<span class="glyphicon glyphicon-ok green"></span>
+					&nbsp;&nbsp;&nbsp;Your <b>Fully customized VM </b> service has been updated successfully.
+				</h5>
+			</div>
+		</div>	
+		
     	<div class="row">
         	<div class="col-sm-12">
         	

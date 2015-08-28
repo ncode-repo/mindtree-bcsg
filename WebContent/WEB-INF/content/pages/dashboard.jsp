@@ -10,7 +10,6 @@ LoginForm userDetails = (LoginForm) session.getAttribute("login_details");
 JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 String cancel_id = (String)session.getAttribute("cancel_id");
 String modify_id= (String)session.getAttribute("modify_id");
-
 %>
 <head>
 	<title> Product  Details </title>
@@ -78,7 +77,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 	    			} else if(z.status.toLowerCase() == 'canceled'.toLowerCase()) {
 	    				billing_item = "billing-item-cancel";
 	    			}
-					returnedData += '<div class="row greyspace'+ billing_item+'">';
+					returnedData += '<div class="row greyspace  '+ billing_item+'">';
 		    		returnedData += '<div class="col-sm-2">';
 		    		returnedData += '<input type="radio" class="prodcheck" value="prodselect'+y+'" name="prodsel" />';
 		    		returnedData += '<input type="hidden"  value="'+z.id+'" name="svcId" />';
@@ -88,7 +87,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 		    		returnedData += '<div class="col-sm-5 margin-top-ten">';
 		    		returnedData += z.name;
 		    		returnedData += '</div>';
-		    		returnedData += '<div class="col-sm-3">';
+		    		returnedData += '<div class="col-sm-3 margin-top-ten">';
 		    		returnedData += z.status;
 		    		returnedData += '</div>';
 		    		returnedData += '<div class="col-sm-2">';

@@ -49,6 +49,7 @@ public class SubscribeAction extends Action{
 					sub_id  = createSubscription(token_id,subscribeForm);
 				int sub_row= StoreDataDAO.storeSubscriptionId(sub_id,user_id, subscribeForm.getDisplayName());
 				if(sub_row>0) {
+					 request.getSession().setAttribute("serviceName", subscribeForm.getDisplayName());
 					forward = "success";			
 				}
 				

@@ -17,12 +17,12 @@
 		<action path="/welcome" forward="/WEB-INF/content/pages/profile.jsp"></action>
 		
 		<action path="/profile" name="UserDetailsForm" scope="session" type="com.actions.UserDetailsAction" >
-		<forward name="subscribe" path="/WEB-INF/content/pages/appDetails.jsp"></forward>
+			<forward name="subscribe" path="/WEB-INF/content/pages/appDetails.jsp"></forward>
 		</action>
 		
 		<action path="/getAppsDet" name="SubscribeForm" type="com.actions.SubscribeAction" >
-		<forward name="failure"  path="/WEB-INF/content/pages/appDetails.jsp" />
-		<forward name="success"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
+			<forward name="failure"  path="/WEB-INF/content/pages/appDetails.jsp" />
+			<forward name="success"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 		</action>
 		
 		<action path="/editSub" forward="/WEB-INF/content/pages/editSubsctiption.jsp"></action>
@@ -40,10 +40,10 @@
 		</action>
 		
 		<action path="/cancel" scope="request" name="CancelActionForm" type="com.actions.CancelSubscriptionAction">
-		<forward name="success"  path="/login.do" />
-		<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
-		<forward name="modify"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
-		<forward name="successm"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
+			<forward name="success"  path="/login.do" />
+			<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
+			<forward name="modify"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
+			<forward name="successm"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
 		</action>
 		
 	</action-mappings>

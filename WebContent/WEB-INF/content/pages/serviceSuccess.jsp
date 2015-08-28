@@ -11,6 +11,10 @@
     <script type="text/javascript" src="ui/js/login.js"></script>
 </head>
 <body>
+	<%	
+		String selSerives = (String) request.getSession().getAttribute("serviceName");
+		request.getSession().removeAttribute("serviceName");
+	%>	
 	<header>
 		<div class="row padding-top-thirty">
 			<div class="container">
@@ -34,7 +38,8 @@
 			<h5 class="center">
 				<span class="glyphicon glyphicon-ok green"></span>
 				&nbsp;&nbsp;&nbsp;
-				Your <b>Fully customized VM</b> service has been subscribed successfully.
+				
+				Your <b><%= selSerives%></b> service has been subscribed successfully.
 			</h5>
 		</div>
 

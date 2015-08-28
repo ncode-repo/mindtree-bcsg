@@ -26,12 +26,16 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 			var prodid=thisObj.attr("id");
 			var id=prodid.substring("prodid".length);
 			
+			var dateString = jsonNew.members[id].publishedDate;
+			var dateArray = dateString.split('-');
+			var dateStr = dateArray[2].substring(0,2) + "/" +
+						  dateArray[1] + "/" + dateArray[0]; 
 			
 			$('#prodCategory').html(jsonNew.members[id].category.displayName);
 			$('#prodVerson').html(jsonNew.members[id].offeringVersion);
 			$('#prodPrice').html('&#36;'+jsonNew.members[id].initPrice.price);
 			$('#prodRecPrice').html('&#36;'+jsonNew.members[id].recurringPrice.price);
-			
+			$('#pubDate').html(dateStr);
 			$('#prod-details').on('show.bs.mocdal', centerModal);
 			$('#prod-details').modal("show");	
 				
@@ -60,6 +64,7 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 	    		returnedData += '<input type="hidden"  value="'+z.id+'" name="svcId" />';
 	    		returnedData += '<input type="hidden"  value="'+z.catalogId+'" name="catalogId" />';
 	    		returnedData += '<input type="hidden"  value="'+z.category.name+'" name="categoryName" />';
+	    		returnedData += '<input type="hidden"  value="'+z.displayName+'" name="displayName'+y+'" />';
 	    		returnedData += '</div>';
 	    		returnedData += '<div class="col-sm-5 margin-top-ten">';
 	    		returnedData += z.displayName;
@@ -132,14 +137,15 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
             		</div>
           		</div>
           		<form name="services" action="getAppsDet.do" id="servicesForm"  method="post">
-				<div class="row" id="resposediv">
-				  
-				</div>		  
-	           <div class="row margin-bottom-eighty">
-	           		<div class="col-sm-12 no-padding">
-	           			<input type="button" disabled="disabled" id="continueButton" class="btn btn-primary" name="continueUser" value="Subscribe">
-	           		</div>
-	           </div>
+					<div class="row" id="resposediv">
+					  
+					</div>
+					
+		           <div class="row margin-bottom-eighty">
+		           		<div class="col-sm-12 no-padding">
+		           			<input type="button" disabled="disabled" id="continueButton" class="btn btn-primary" name="continueUser" value="Subscribe">
+		           		</div>
+		           </div>
 	           </form>
         </div>
       </div>
@@ -171,6 +177,10 @@ JSONObject jsonArray = (JSONObject) session.getAttribute("offerings");
 	                        <tr>
 	                            <td>Recurring Price</td>
 	                            <td><span id="prodRecPrice"></span></td>
+	                        </tr>
+	                          <tr>
+	                            <td>Published Date</td>
+	                            <td><span id="pubDate"></span></td>
 	                        </tr>
 	                    </tbody>
 	                </table>

@@ -11,6 +11,7 @@ private String svcId;
 private String catalogId;
 private String categoryName;
 private String prodsel;
+private String displayName;
 public String getSvcId() {
 	return svcId;
 }
@@ -34,6 +35,12 @@ public String getProdsel() {
 }
 public void setProdsel(String prodsel) {
 	this.prodsel = prodsel;
+}
+public String getDisplayName() {
+	return displayName;
+}
+public void setDisplayName(String displayName) {
+	this.displayName = displayName;
 }
 
 }

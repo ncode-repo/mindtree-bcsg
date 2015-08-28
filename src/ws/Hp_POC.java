@@ -195,7 +195,7 @@ public static String generateToken(){
 		}
 	}
 
-	public static String createSubscription(String token,String id,String catalogId,String categoryName){
+	public static String createSubscription(String token,String id,String catalogId,String categoryName,String subName){
 		JSONObject json = new JSONObject();
 		JSONObject fields = new JSONObject(); 
 		Client client = Client.create();
@@ -208,7 +208,7 @@ public static String generateToken(){
 		s.append("Content-Disposition: form-data; name=\"requestForm\" \n\n");
 		try {
 			json.put("categoryName",categoryName);
-			json.put("subscriptionName", "Login");
+			json.put("subscriptionName", subName);
 			json.put("startDate", "2015-09-21T05:32:17.000Z");
 			json.put("endDate", "2015-10-24T05:32:17.000Z");
 			fields.put("field_8a83d7a44f1d0f21014f1d37689308ad", "win2008");

@@ -27,7 +27,7 @@ public class StoreDataDAO {
 				preparedStatement.setString(4, userDetailsForm.getTelephone());
 				i = preparedStatement.executeUpdate();
 				
-				if(1>0){
+				/*if(1>0){
 					Statement stmt = dbConnection.createStatement();//("select user_id from subscription_details where subscription_id = 'qqq'");
 					//preparedStatement.setString(1, email);
 					ResultSet rs =	stmt.executeQuery("select user_id from user_details where email_address = '"+userDetailsForm.getUserEmail()+"'");
@@ -43,7 +43,7 @@ public class StoreDataDAO {
 					preparedStatement.setString(2, id);
 					i = preparedStatement.executeUpdate();
 				}
-				}
+				}*/
 			} catch (SQLException s) {
 				System.out.println("SQL Exception while inserting details: "
 						+ s.getMessage());
@@ -65,18 +65,19 @@ public class StoreDataDAO {
 		return i;
 	}
 
-	public static int storeSubscriptionId(String email, String id) {
+	public static int storeSubscriptionId(String id,String user_id,String name) {
 		Connection dbConnection = DbConnect.getConnection();
 		PreparedStatement preparedStatement = null;
 		int i = 0;
 		if (dbConnection != null) {
 			try {
-				String user_id = getUserId(email);
+				//String user_id = getUserId(email);
 				preparedStatement = dbConnection
-						.prepareStatement("insert into subscription_details(`user_id`,`subscription_id`) values ( ?, ?)");
+						.prepareStatement("insert into subscription_details(`user_id`,`subscription_id`,`subscription_name`) values ( ?, ?,?)");
 				preparedStatement.setString(1, user_id);
 
 				preparedStatement.setString(2, id);
+				preparedStatement.setString(3, name);
 				i = preparedStatement.executeUpdate();
 			} catch (SQLException s) {
 				System.out.println("SQL Exception while inserting subscription ID: "
@@ -101,10 +102,11 @@ public class StoreDataDAO {
 		if (dbConnection != null) {
 			try {
 				preparedStatement = dbConnection
-						.prepareStatement("select user_id from subscription_details where subscription_id = 'qqq'");
-				//preparedStatement.setString(1, email);
+						.prepareStatement("select user_id from user_details where email_address = ?");
+				preparedStatement.setString(1, email);
 				ResultSet rs = preparedStatement.executeQuery();
-				user_id = String.valueOf(rs.getInt(0));
+				boolean row = rs.next();
+				user_id = String.valueOf(rs.getLong("user_id"));
 			} catch (SQLException s) {
 				System.out.println("SQL Exception while fetching user_id: "
 						+ s.getMessage());
@@ -138,6 +140,34 @@ public class StoreDataDAO {
 				while(rs.next()){
 					sub_ids.add(rs.getString(i));
 					i++;
+				}
+			} catch (SQLException s) {
+				System.out.println("SQL Exception while fetching subscription_id: "
+						+ s.getMessage());
+			} catch (Exception e) {
+				System.out.println("Exception while fetching subscription_id: "
+						+ e.getMessage());
+			} finally {
+				DbConnect.closeConnection();
+			}
+
+		}
+		return sub_ids;
+	}
+	
+	public static ArrayList<String> getSubscriptionNames(String email) {
+		Connection dbConnection = DbConnect.getConnection();
+		PreparedStatement preparedStatement = null;
+		int i = 1;
+		ArrayList<String> sub_ids = new ArrayList<String>();
+		if (dbConnection != null) {
+			try {
+				preparedStatement = dbConnection
+						.prepareStatement("select subscription_name from subscription_details where user_id in (select user_id from user_details where email_address = ?)");
+				preparedStatement.setString(1, email);
+				ResultSet rs = preparedStatement.executeQuery();
+				while(rs.next()){
+					sub_ids.add(rs.getString(i));
 				}
 			} catch (SQLException s) {
 				System.out.println("SQL Exception while fetching subscription_id: "

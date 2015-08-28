@@ -31,6 +31,7 @@ public static SubscribeActionForm parseJson(JSONObject result,int index){
 						  form.setSvcId((String)j.get("id"));  
 						  form.setCatalogId((String)j.get("catalogId"));
 						  form.setCategoryName(j.getJSONObject("category").getString("name"));
+						  form.setDisplayName((String)j.get("displayName"));
 						  break;
 					  }
 				  }
@@ -43,7 +44,7 @@ public static SubscribeActionForm parseJson(JSONObject result,int index){
 	return form;
 }
 
-public static JSONObject parseJson(JSONObject result,ArrayList<String> subIds){
+public static JSONObject parseJson(JSONObject result,ArrayList<String> subNames){
 	int records = 0;
 	JSONArray sub_members= new JSONArray();
 	JSONObject new_members = new JSONObject();
@@ -57,9 +58,9 @@ public static JSONObject parseJson(JSONObject result,ArrayList<String> subIds){
 				  JSONArray members  = (JSONArray) result.get(key);
 				  for(int k=0;k<members.length();k++){
 						  JSONObject j=  members.getJSONObject(k);
-						  Iterator lst =   subIds.iterator();
+						  Iterator lst =   subNames.iterator();
 						  while(lst.hasNext()){
-							  if(j.getString("id").equalsIgnoreCase((String)lst.next())){
+							  if(j.getString("name").equalsIgnoreCase((String)lst.next())){
 								  sub_members.put(j);  
 							  }
 						  }

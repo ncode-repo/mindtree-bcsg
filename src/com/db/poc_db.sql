@@ -18,3 +18,6 @@ CREATE TABLE `subscription_details` (
     REFERENCES `hp_poc`.`user_details` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+    
+ALTER TABLE `subscription_details` 
+ADD COLUMN `subscription_name` VARCHAR(200) NULL AFTER `subscription_id`;

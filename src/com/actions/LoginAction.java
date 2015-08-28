@@ -36,12 +36,12 @@ public class LoginAction extends Action{
 	private static JSONObject getSubscriptions(LoginForm loginForm,HttpSession session){
 		JSONObject members = null;
 		String token_id = Hp_POC.generateToken();
-		ArrayList<String> subIds = StoreDataDAO.getSubscriptionIds(loginForm.getUserEmail());
+		ArrayList<String> subNames = StoreDataDAO.getSubscriptionNames(loginForm.getUserEmail());
 		if(token_id!=null){
 			session.setAttribute("token", token_id);
 			members = Hp_POC.getSubscriptionList(token_id);
 		}
-		JSONObject result = JsonParser.parseJson(members,subIds);
+		JSONObject result = JsonParser.parseJson(members,subNames);
 		return result;
 	}
 }

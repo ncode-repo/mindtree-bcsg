@@ -251,7 +251,7 @@ public static String generateToken(){
 		JSONObject json = new JSONObject();
 		Client client = Client.create();
 		try {
-			json.put("status", "ACTIVE");
+			json.put("user_id", "bcsguser");
 			System.out.println("Request body: " + json.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();

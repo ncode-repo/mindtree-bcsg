@@ -20,6 +20,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 	<script type="text/javascript" src="ui/js/jquery.1.9.0.js"></script>
 	<script type="text/javascript" src="ui/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="ui/js/profDetails.js"></script>
     
     <script type="text/javascript">
     	var jsonArray = <%=jsonArray%>
@@ -216,7 +217,7 @@ String modify_id= (String)session.getAttribute("modify_id");
               			Other Service Details 
             		</div>
           		</div>
-          		<form name="services" action="getAppsDet.do" id="servicesForm"  method="post">
+          		<form name="services" action="cancel.do" id="servicesForm"  method="post">
 				<div class="row" id="resposediv">
 				  
 				</div>		  

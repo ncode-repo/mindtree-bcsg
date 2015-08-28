@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<%
+JSONObject subDetails = (JSONObject) session.getAttribute("subDetails");
+%>
 <head>
 	<title> User Details </title>
 	<link href="ui/css/bootstrap/bootstrap.css" rel="stylesheet">

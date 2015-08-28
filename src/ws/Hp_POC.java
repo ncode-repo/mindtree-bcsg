@@ -366,4 +366,30 @@ public static String generateToken(){
 	return modify_id;
 	}
 
+	public static JSONObject getSubscriptionDetails(String token,String sub_id){
+		StringBuilder uri = new StringBuilder();
+		uri.append("https://csa45.pocaas.hpintelco.org:8444/csa/api/mpp/mpp-subscription/");
+		uri.append(sub_id);
+		uri.append("/modify");
+		Client client = Client.create();
+		WebResource webResource = client
+				.resource(uri.toString());
+		String authorization = "idmTransportUser" + ":" + "idmTransportUser";
+		authorization = headerAuth(authorization);
+		ClientResponse wsResponse = webResource
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON)
+				.header("Authorization", authorization)
+				.header("X-Auth-token", token).get(ClientResponse.class);
+		JSONObject result = new JSONObject();
+		try {
+			result = wsResponse.getEntity(JSONObject.class);
+			System.out.println("Subscription Details: " + result.toString());
+		} catch (Exception e) {
+			System.out.println("Exception message: " + e.getMessage());
+			System.out.println("Response message:" + wsResponse.toString());
+		}
+		return result;
+	}
+
 }

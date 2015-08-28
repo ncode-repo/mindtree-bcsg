@@ -9,6 +9,7 @@
 LoginForm userDetails = (LoginForm) session.getAttribute("login_details");
 JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 String cancel_id = (String)session.getAttribute("cancel_id");
+String modify_id= (String)session.getAttribute("modify_id");
 
 %>
 <head>
@@ -149,7 +150,7 @@ String cancel_id = (String)session.getAttribute("cancel_id");
 			</h5>
 		</div>
 	</div>	
-	<%} %>
+	<%session.removeAttribute("cancel_id");} %>
 	<logic:present name="error" scope="request">
 		<div id="suvscirbeErrMsg" class="padding-top-thirty">
 			<div class="message">
@@ -184,8 +185,8 @@ String cancel_id = (String)session.getAttribute("cancel_id");
 	 
 	 
 	<div class="container padding-top-thirty displayNone" id="memberList">
-		
-		<div id="serviceUpdateMsg" class="displayNone">
+		<%if(modify_id!=null){ %>
+		<div id="serviceUpdateMsg">
 			<div class="message-green margin-top-forty">
 				<h5 class="center">
 					<span class="glyphicon glyphicon-ok green"></span>
@@ -193,7 +194,7 @@ String cancel_id = (String)session.getAttribute("cancel_id");
 				</h5>
 			</div>
 		</div>	
-		
+		<%session.removeAttribute("modify_id");} %>
     	<div class="row">
         	<div class="col-sm-12">
         	

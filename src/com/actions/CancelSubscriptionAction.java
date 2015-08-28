@@ -11,6 +11,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.codehaus.jettison.json.JSONObject;
 
 import ws.Hp_POC;
 
@@ -24,18 +25,21 @@ public class CancelSubscriptionAction extends Action{
 		HttpSession session = request.getSession();
 		String token_id = Hp_POC.generateToken();
 		if(cancelActionForm.getEvent().equalsIgnoreCase("modify_page")){
-			//String modify_id = Hp_POC.modifySubscription(token_id, sub_id, "8a83d7a44f1d0f21014f23000f8816df", cancelActionForm.getCpu());
+			JSONObject sub_details = Hp_POC.getSubscriptionDetails(token_id, cancelActionForm.getSvcId());
 			session.setAttribute("modify_form", cancelActionForm);
+			session.setAttribute("subDetails", sub_details);
 			return mapping.findForward("modify");
 		}else if(cancelActionForm.getEvent().equalsIgnoreCase("modify")){
 			CancelActionForm modifyActionForm = (CancelActionForm)session.getAttribute("modify_form");
 			String modify_id = Hp_POC.modifySubscription(token_id, modifyActionForm.getSvcId(), modifyActionForm.getCatalogId(), cancelActionForm.getCpu());
+			session.setAttribute("modify_id", modify_id);
 			return mapping.findForward("success");
 		}
 		else{
 		String cancel_id = cancelSubscription(token_id,cancelActionForm,session);
 		session.setAttribute("cancel_id", cancel_id);
-		return mapping.findForward("success");}
+		return mapping.findForward("success");
+		}
 	}
 	
 	private static String cancelSubscription(String token_id,CancelActionForm cancelActionForm,HttpSession session){

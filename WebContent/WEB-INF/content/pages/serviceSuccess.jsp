@@ -32,8 +32,9 @@
 	<div id="serviceSuccess">
 		<div class="message-green margin-top-forty">
 			<h5 class="center">
-				<span class="glyphicon glyphicon-ok green" style="margin-right:5px"></span>
-				Your <b>Fully customized VM </b> service has been subscribed successfully.
+				<span class="glyphicon glyphicon-ok green"></span>
+				&nbsp;&nbsp;&nbsp;
+				Your <b>Fully customized VM</b> service has been subscribed successfully.
 			</h5>
 		</div>
 

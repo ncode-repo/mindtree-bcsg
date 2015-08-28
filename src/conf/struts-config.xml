@@ -31,10 +31,14 @@
 		
 		<action path="/appSus" forward="/WEB-INF/content/pages/serviceSuccess.jsp"></action>
 		
+		
+		<action path="/usrLogin" forward="/WEB-INF/content/pages/login.jsp"></action>
+		
 		<action path="/login" scope="session" name="LoginForm" type="com.actions.LoginAction">
-		<forward name="success"  path="/WEB-INF/content/pages/dashboard.jsp" />
-		<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
+			<forward name="success"  path="/WEB-INF/content/pages/dashboard.jsp" />
+			<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 		</action>
+		
 		<action path="/cancel" scope="request" name="CancelActionForm" type="com.actions.CancelSubscriptionAction">
 		<forward name="success"  path="/login.do" />
 		<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
@@ -46,3 +50,4 @@
 	<message-resources
 		parameter="ApplicationResources" null="false"/>
 </struts-config>
+

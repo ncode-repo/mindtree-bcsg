@@ -7438,5 +7438,32 @@ and (max-device-width : 360px) {
 	}
 }
 .prodcheck { 
-        margin-top:14px !important; 
+        margin-top:14px !important;  
+}
+
+.billing-item-active, .billing-item-pending, .billing-item-cancel {
+  padding: 15px;
+  margin-bottom: 5px;
+}
+
+.billing-item-active {
+	background-color: #dff0d8;
+}
+
+.billing-item-active:hover  {
+  background-color: #d0e9c6;
+}
+.billing-item-pending {
+	background-color: #d9edf7;
+} 
+
+.billing-item-pending:hover  {
+  background-color: #c4e3f3;
+}
+.billing-item-cancel {
+	background-color: #fcf8e3;
+}
+
+.billing-item-cancel:hover  {
+  background-color: #faf2cc;
 }

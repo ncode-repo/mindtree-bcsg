@@ -7463,7 +7463,12 @@ and (max-device-width : 360px) {
 .billing-item-cancel {
 	background-color: #fcf8e3;
 }
-
 .billing-item-cancel:hover  {
   background-color: #faf2cc;
+}
+.billing-item-terminated {
+	background-color: #f2dede ;
+}
+.billing-item-terminated:hover  {
+  background-color: #ebcccc ;
 }

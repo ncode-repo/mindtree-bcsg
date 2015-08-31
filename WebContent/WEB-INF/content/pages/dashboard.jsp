@@ -90,6 +90,8 @@ request.getSession().removeAttribute("cancelSvcName");
 	    				billing_item = "billing-item-pending";
 	    			} else if(z.status.toLowerCase() == 'cancelled'.toLowerCase()) {
 	    				billing_item = "billing-item-cancel";
+			    	} else if(z.status.toLowerCase() == 'terminated'.toLowerCase()) {
+	    				billing_item = "billing-item-terminated";
 	    			}
 					returnedData += '<div class="row greyspace  '+ billing_item+'">';
 		    		returnedData += '<div class="col-sm-2">';

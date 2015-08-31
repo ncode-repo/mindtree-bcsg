@@ -56,6 +56,15 @@ String modify_id= (String)session.getAttribute("modify_id");
 		});
 		
 		
+		function fnProdOption(thisObj) {
+			var this_Obj = $(thisObj);
+			var prodid=this_Obj.attr("id");
+			var id=prodid.substring("prodselect".length);
+			$('#svcId').val(jsonArray.members[id].id);
+			$('#catalogId').val(jsonArray.members[id].catalogId);
+			$('#categoryName').val(jsonArray.members[id].serviceName));
+			checkCkbox(); 
+		}
 		
 		$(document).ready(function() {
 			$('#prod-details').on('show.bs.modal', centerModal);
@@ -79,7 +88,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 	    			}
 					returnedData += '<div class="row greyspace  '+ billing_item+'">';
 		    		returnedData += '<div class="col-sm-2">';
-		    		returnedData += '<input type="radio" class="prodcheck" value="prodselect'+y+'" name="prodsel" />';
+		    		returnedData += '<input type="radio" class="prodcheck" id="prodselect'+y+'" value="prodselect'+y+'" name="prodsel"  onclick="fnProdOption(this)"/>';
 		    		returnedData += '<input type="hidden"  value="'+z.id+'" name="svcId" />';
 		    		returnedData += '<input type="hidden"  value="'+z.catalogId+'" name="catalogId" />';
 		    		returnedData += '<input type="hidden"  value="'+z.serviceName+'" name="categoryName" />';
@@ -101,10 +110,6 @@ String modify_id= (String)session.getAttribute("modify_id");
 	    	$('#resposediv').append(returnedData);
 	    	$("#editSubscription").attr('disabled', true);
 			$("#cancelSubscription").attr('disabled', true);
-	    	$("input[name='prodsel']").click(function() { 
-                 checkCkbox(); 
-         	});
-	    	
 	    	$('#cancelSubscription').click(function() {
 	    		$('#cancelSucessMsg').show();
 	    	});
@@ -227,6 +232,9 @@ String modify_id= (String)session.getAttribute("modify_id");
 	           			<input type="button" disabled="disabled" id="cancelSubscription" class="btn btn-primary margin-left-twenty" name="cancelSubscription" value="Cancel Subscription">
 	           		</div>
 	           </div>
+	           	<input type="hidden" name="svcId" id="svcId" />
+		    	<input type="hidden" name="catalogId"  id="catalogId"/>
+		    	<input type="hidden" name="categoryName" id="categoryName"/>
 	           </form>
         </div>
       </div>

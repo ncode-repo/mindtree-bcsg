@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page import="org.codehaus.jettison.json.JSONObject"%>
 <html>
 <%
 JSONObject subDetails = (JSONObject) session.getAttribute("subDetails");

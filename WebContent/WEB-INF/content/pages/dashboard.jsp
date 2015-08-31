@@ -10,6 +10,8 @@ LoginForm userDetails = (LoginForm) session.getAttribute("login_details");
 JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 String cancel_id = (String)session.getAttribute("cancel_id");
 String modify_id= (String)session.getAttribute("modify_id");
+String selSerives = (String) request.getSession().getAttribute("cancelSvcName");
+request.getSession().removeAttribute("cancelSvcName");
 %>
 <head>
 	<title> Product  Details </title>
@@ -63,6 +65,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 			$('#svcId').val(jsonArray.members[id].id);
 			$('#catalogId').val(jsonArray.members[id].catalogId);
 			$('#categoryName').val(jsonArray.members[id].serviceName);
+			$('#subName').val(jsonArray.members[id].name);
 			checkCkbox(); 
 		}
 		
@@ -151,7 +154,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 		<div class="message-green margin-top-forty">
 			<h5 class="center">
 				<span class="glyphicon glyphicon-ok green"></span>
-				&nbsp;&nbsp;&nbsp;Your <b>Fully customized VM </b> service has been cancelled successfully.
+				&nbsp;&nbsp;&nbsp;Your <b><%=selSerives %> </b> service has been cancelled successfully.
 			</h5>
 		</div>
 	</div>	
@@ -235,6 +238,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 	           	<input type="hidden" name="svcId" id="svcId" />
 		    	<input type="hidden" name="catalogId"  id="catalogId"/>
 		    	<input type="hidden" name="categoryName" id="categoryName"/>
+		    	<input type="hidden" name="subName" id="subName" />
 	           </form>
         </div>
       </div>

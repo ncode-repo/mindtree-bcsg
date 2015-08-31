@@ -38,6 +38,7 @@ public class CancelSubscriptionAction extends Action{
 		else{
 		String cancel_id = cancelSubscription(token_id,cancelActionForm,session);
 		session.setAttribute("cancel_id", cancel_id);
+		session.setAttribute("cancelSvcName", cancelActionForm.getSubName());
 		return mapping.findForward("success");
 		}
 	}

@@ -34,6 +34,7 @@
     	</div>
  	</div>
 	<div id="serviceSuccess">
+	<%if(selSerives!=null){ %>
 		<div class="message-green margin-top-forty">
 			<h5 class="center">
 				<span class="glyphicon glyphicon-ok green"></span>
@@ -42,7 +43,7 @@
 				Your <b><%= selSerives%></b> service has been subscribed successfully.
 			</h5>
 		</div>
-
+<%} %>
 	  <div class="container">
 	    	<div class="row forty-break-space">
 	        	<div class="col-sm-12">

@@ -12,6 +12,13 @@ private String catalogId;
 private String categoryName;
 private String event;
 private String cpu;
+private String subName;
+public String getSubName() {
+	return subName;
+}
+public void setSubName(String subName) {
+	this.subName = subName;
+}
 public String getSvcId() {
 	return svcId;
 }

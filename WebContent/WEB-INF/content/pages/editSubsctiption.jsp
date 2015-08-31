@@ -2,7 +2,7 @@
 <%@ page import="org.codehaus.jettison.json.JSONObject"%>
 <html>
 <%
-JSONObject subDetails = (JSONObject) session.getAttribute("subDetails");
+	JSONObject subDetails = (JSONObject) session.getAttribute("subDetails");
 %>
 <head>
 	<title> User Details </title>
@@ -13,6 +13,48 @@ JSONObject subDetails = (JSONObject) session.getAttribute("subDetails");
 	<script type="text/javascript" src="ui/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="ui/js/profDetails.js"></script>
+    <script type="text/javascript">
+    	var jsonArray = <%=jsonArray%>;
+    
+		$(document).ready(function() {
+			var fieldList = [];
+            var groupList = [];
+			$.each(jsonArray.layout,function(c,d) {
+				$.each(d.layout, function(e, f) {
+					if(f.selected) {
+						fieldList.push(d.layout[0].fieldId);
+						groupList.push(f.group);
+					}
+				});
+			});
+			
+			
+			$.each(fieldList, function(l,m) {
+			 	$.each(jsonArray.fields,function(y,z){
+			 		if(z.id == m) {
+			 			if(groupList[l]  == 'field_07CD9C75_47FB_9100_814D_E7F6613BF3E4_group') {
+			 				$('#osVer').html(z.displayName);
+			 			}
+			 			if(groupList[l]  == 'field_08A6B20A_22AB_1E71_A6A2_0EF6568BA6C3_group') {
+			 				$('#cpu').val(parseInt(z.displayName));
+			 			}
+			 			if(groupList[l]  == 'ield_4E0A3D51_1004_BE64_4957_04F0DF8B3437_group') {
+				 			$('#memoryVal').html(z.displayName);
+				 		}
+			 			if(groupList[l]  == 'field_6FC9B127_46AC_4FA7_8888_0503EDDE5121_group') {
+				 			$('#diskSize').html(z.displayName);
+				 		}
+			 			if(groupList[l]  == 'field_3219BBFF_A753_4265_E0D8_05064E8A45A6_group') {
+				 			$('#networkType').html(z.displayName);
+				 		}
+			 			if(groupList[l]  == 'field_2CC704AC_3517_3DC6_0DFE_99F92CA176C1_group') {
+				 			$('#virtualMon').html(z.displayName);
+				 		}
+			 		}
+			 	});
+			});
+		});
+    </script>
 </head>
 <body>
 	<header>
@@ -50,118 +92,47 @@ JSONObject subDetails = (JSONObject) session.getAttribute("subDetails");
 		    <tbody>
 		        <tr>
 		            <td>1</td>
-		            <td>c</td>
-		            <td>Cloud Demo 81</td>
+		            <td>OS version</td>
+		            <td><span id="osVer"></span></td>
 		        </tr>
 		        <tr>
 		            <td>2</td>
-		            <td>directory backed up</td>
-		            <td>/User</td>
+		            <td>Number of CPU</td>
+		            <td>
+						<form name="services" action="cancel.do" id="editForm"  method="post">
+			            	<select id="cpu" name="cpu" class="form-control" style="width:90px">
+			            		<option value="1">1</option>
+			            		<option value="2">2</option>
+			            		<option value="4">4</option>
+			            	</select>
+			            	<input type="hidden" value="modify" id="event" name="event"/>
+			           </form>
+					</td>
 		            
 		        </tr>
 		        <tr>
 		            <td>3</td>
-		            <td>domain</td>
-		            <td>Cloud resources</td>
+		            <td>Memory Size</td>
+		            <td><span id="memoryVal">512 MB</span></td>
 		        </tr>
 		        <tr>
 		            <td>4</td>
-		            <td>HDD_SIZE </td>
+		            <td>Additional Disk </td>
 		            <td>
-		            	30 (GB)
+		            	<span id="diskSize"></span>
 		            </td>
 		        </tr>
 		        <tr>
 		            <td>5</td>
-		            <td>HOSTNAME  </td>
-		            <td>4f64fd6569154a</td>
+		            <td>Selected Network</td>
+		            <td><span id="networkType"></span></td>
 		        </tr>
 		        
 		        <tr>
 		            <td>6</td>
-		            <td>IPADDRESS  </td>
-		            <td>10.3.87.212</td>
+		            <td>Virtual Machine Monitoring options  </td>
+		            <td><span id="virtualMon"></span></td>
 		        </tr>
-		        
-		        
-		        <tr>
-		            <td>7</td>
-		            <td>MACADDRESS  </td>
-		            <td>00:50:56:bc:49:67</td>
-		        </tr>
-		        
-		        <tr>
-		            <td>8</td>
-		            <td>MEMORYINMB  </td>
-		            <td>
-		            512 MB
-		            </td>
-		        </tr>
-		        
-		        
-		        <tr>
-		            <td>9</td>
-		            <td>Monitoring option subscribed  </td>
-		            <td>None</td>
-		        </tr>
-		        
-		        
-		        <tr>
-		            <td>10</td>
-		            <td>NCPU   </td>
-		            <td>
-		            <form name="services" action="cancel.do" id="editForm"  method="post">
-		            	<select id="cpu" name="cpu" class="form-control" style="width:90px">
-		            		<option value="1">1</option>
-		            		<option value="2">2</option>
-		            		<option value="4">4</option>
-		            	</select>
-		            	<input type="hidden" value="modify" id="event" name="event"/>
-		            	</form>
-		            </td>
-		        </tr>
-		        
-		        
-		        <tr>
-		            <td>11</td>
-		            <td>NOOFSERVERS   </td>
-		            <td>3</td>
-		        </tr>
-		        
-		        
-		        <tr>
-		            <td>12</td>
-		            <td>POWERSTATE   </td>
-		            <td>poweredOn</td>
-		        </tr>
-		        
-		        <tr>
-		            <td>13</td>
-		            <td>RECURRENCE   </td>
-		            <td>
-		           	 Weekly
-		            	
-		            </td>
-		        </tr>
-		        
-		        <tr>
-		            <td>14</td>
-		            <td>vcenter template   </td>
-		            <td>win2008</td>
-		        </tr>
-		        
-		        <tr>
-		            <td>15</td>
-		            <td>VMID </td>
-		            <td>vm-2224</td>
-		        </tr>
-		        
-		        <tr>
-		            <td>16</td>
-		            <td>widows or linux </td>
-		            <td>Windows</td>
-		        </tr>
-		        
 		    </tbody>
 			</table>
 		</div>

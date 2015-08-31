@@ -1,6 +1,8 @@
 package ws;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.ws.rs.core.MediaType;
 
@@ -8,8 +10,6 @@ import org.apache.catalina.util.Base64;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-
-import ws.response.parser.JsonParser;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -70,7 +70,7 @@ public class Hp_POC {
 			JSONObject token = result.getJSONObject("token");
 			String token_id = token.getString("id");
 			System.out.println("Token ID: " + token_id);
-			modifySubscription(token_id, "8a83d7a44f280299014f6a3f17f13c4b", "8a83d7a44f1d0f21014f23000f8816df","2");
+			modifySubscription(token_id, "8a83d7a44f280299014f6a3f17f13c4b", "8a83d7a44f1d0f21014f23000f8816df","4");
 			//listSvcOfferings(token_id, "");
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
@@ -209,8 +209,13 @@ public static String generateToken(){
 		try {
 			json.put("categoryName",categoryName);
 			json.put("subscriptionName", subName);
-			json.put("startDate", "2015-09-21T05:32:17.000Z");
-			json.put("endDate", "2015-10-24T05:32:17.000Z");
+			Calendar cal = Calendar.getInstance(); 
+			Date date = cal.getTime();
+			cal.add(Calendar.MONTH, 1);
+			Date newDate = cal.getTime();
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSz");
+			json.put("startDate", dateFormatter.format(date));
+			json.put("endDate", dateFormatter.format(newDate));
 			fields.put("field_8a83d7a44f1d0f21014f1d37689308ad", "win2008");
 			fields.put("field_8a83d7a44f1d0f21014f1d37689308e3", 1);
 			fields.put("field_8a83d7a44f1d0f21014f1d3768a308fd", 2048);

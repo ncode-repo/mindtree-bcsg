@@ -62,7 +62,7 @@ String modify_id= (String)session.getAttribute("modify_id");
 			var id=prodid.substring("prodselect".length);
 			$('#svcId').val(jsonArray.members[id].id);
 			$('#catalogId').val(jsonArray.members[id].catalogId);
-			$('#categoryName').val(jsonArray.members[id].serviceName));
+			$('#categoryName').val(jsonArray.members[id].serviceName);
 			checkCkbox(); 
 		}
 		

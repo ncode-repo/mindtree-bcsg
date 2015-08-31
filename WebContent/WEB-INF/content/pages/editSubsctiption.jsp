@@ -14,7 +14,7 @@
     <script type="text/javascript" src="ui/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="ui/js/profDetails.js"></script>
     <script type="text/javascript">
-    	var jsonArray = <%=jsonArray%>;
+    	var jsonArray = <%=subDetails%>;
     
 		$(document).ready(function() {
 			var fieldList = [];

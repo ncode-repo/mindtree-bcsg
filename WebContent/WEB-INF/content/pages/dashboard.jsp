@@ -66,7 +66,9 @@ request.getSession().removeAttribute("cancelSvcName");
 			$('#catalogId').val(jsonArray.members[id].catalogId);
 			$('#categoryName').val(jsonArray.members[id].serviceName);
 			$('#subName').val(jsonArray.members[id].name);
-			checkCkbox(); 
+			if(jsonArray.members[id].status.toLowerCase() != 'cancelled') {
+                checkCkbox();
+          } 
 		}
 		
 		$(document).ready(function() {
@@ -86,7 +88,7 @@ request.getSession().removeAttribute("cancelSvcName");
 		    			billing_item = "billing-item-active";
 	    			} else if(z.status.toLowerCase() == 'pending'.toLowerCase()) {
 	    				billing_item = "billing-item-pending";
-	    			} else if(z.status.toLowerCase() == 'canceled'.toLowerCase()) {
+	    			} else if(z.status.toLowerCase() == 'cancelled'.toLowerCase()) {
 	    				billing_item = "billing-item-cancel";
 	    			}
 					returnedData += '<div class="row greyspace  '+ billing_item+'">';

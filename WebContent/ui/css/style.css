@@ -7441,7 +7441,7 @@ and (max-device-width : 360px) {
         margin-top:14px !important;  
 }
 
-.billing-item-active, .billing-item-pending, .billing-item-cancel {
+.billing-item-active, .billing-item-pending, .billing-item-cancel, .billing-item-terminated  {
   padding: 15px;
   margin-bottom: 5px;
 }

@@ -33,6 +33,7 @@ public class CancelSubscriptionAction extends Action{
 			CancelActionForm modifyActionForm = (CancelActionForm)session.getAttribute("modify_form");
 			String modify_id = Hp_POC.modifySubscription(token_id, modifyActionForm.getSvcId(), modifyActionForm.getCatalogId(), cancelActionForm.getCpu());
 			session.setAttribute("modify_id", modify_id);
+			session.setAttribute("modifySvcName", modifyActionForm.getSubName());
 			return mapping.findForward("success");
 		}
 		else{

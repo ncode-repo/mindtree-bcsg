@@ -21,3 +21,6 @@ CREATE TABLE `subscription_details` (
     
 ALTER TABLE `subscription_details` 
 ADD COLUMN `subscription_name` VARCHAR(200) NULL AFTER `subscription_id`;
+
+ALTER TABLE `subscription_details` 
+ADD COLUMN `subscription_count` INT(11) NULL AFTER `subscription_name`;

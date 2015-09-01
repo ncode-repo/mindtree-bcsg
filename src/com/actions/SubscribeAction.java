@@ -36,6 +36,7 @@ public class SubscribeAction extends Action{
 		subscribeForm = JsonParser.parseJson(offerings,Integer.valueOf(subscribeForm.getProdsel().substring(strLen-1)));
 		String sub_id = null;
 		int row_count = 0;
+		long cnt = 1;
 		 String user_id=StoreDataDAO.getUserId(userDetailsForm.getUserEmail());
 		 if(user_id==null){
 			 row_count = StoreDataDAO.storeUserDetails(userDetailsForm,sub_id);
@@ -44,10 +45,16 @@ public class SubscribeAction extends Action{
 			 if(row_count>0||user_id!=null){
 			
 				 String sub_name = subscribeForm.getDisplayName();
-				 subscribeForm.setDisplayName(user_id+"_"+sub_name);
-				 //ArrayList<String> subNames= StoreDataDAO.getSubscriptionNames(userDetailsForm.getUserEmail());
+				 subscribeForm.setDisplayName(user_id+"_"+sub_name+"_"+cnt);
+				 ArrayList<String> subNames= StoreDataDAO.getSubscriptionNames(userDetailsForm.getUserEmail());
+				 if(subNames.contains(subscribeForm.getDisplayName())){
+					 cnt = StoreDataDAO.getSubCnt(userDetailsForm.getUserEmail());
+					 cnt=cnt+1;
+					 subscribeForm.setDisplayName(user_id+"_"+sub_name+"_"+cnt);
+					 
+				 }
 					sub_id  = createSubscription(token_id,subscribeForm);
-				int sub_row= StoreDataDAO.storeSubscriptionId(sub_id,user_id, subscribeForm.getDisplayName());
+				int sub_row= StoreDataDAO.storeSubscriptionId(sub_id,user_id, subscribeForm.getDisplayName(),cnt);
 				if(sub_row>0) {
 					 request.getSession().setAttribute("serviceName", subscribeForm.getDisplayName());
 					forward = "success";			

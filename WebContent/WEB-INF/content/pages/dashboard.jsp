@@ -10,8 +10,12 @@ LoginForm userDetails = (LoginForm) session.getAttribute("login_details");
 JSONObject jsonArray = (JSONObject) session.getAttribute("subscriptionList");
 String cancel_id = (String)session.getAttribute("cancel_id");
 String modify_id= (String)session.getAttribute("modify_id");
+session.removeAttribute("cancel_id");
+session.removeAttribute("modify_id");
 String selSerives = (String) request.getSession().getAttribute("cancelSvcName");
+String modSerives = (String) request.getSession().getAttribute("modifySvcName");
 request.getSession().removeAttribute("cancelSvcName");
+request.getSession().removeAttribute("modifySvcName");
 %>
 <head>
 	<title> Product  Details </title>
@@ -202,11 +206,11 @@ request.getSession().removeAttribute("cancelSvcName");
 			<div class="message-green margin-top-forty">
 				<h5 class="center">
 					<span class="glyphicon glyphicon-ok green"></span>
-					&nbsp;&nbsp;&nbsp;Your <b>Fully customized VM </b> service has been updated successfully.
+					&nbsp;&nbsp;&nbsp;Your <b><%=modSerives %> </b> service has been updated successfully.
 				</h5>
 			</div>
 		</div>	
-		<%session.removeAttribute("modify_id");} %>
+		<%} %>
     	<div class="row">
         	<div class="col-sm-12">
         	

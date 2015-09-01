@@ -65,7 +65,7 @@ public class StoreDataDAO {
 		return i;
 	}
 
-	public static int storeSubscriptionId(String id,String user_id,String name) {
+	public static int storeSubscriptionId(String id,String user_id,String name,long cnt) {
 		Connection dbConnection = DbConnect.getConnection();
 		PreparedStatement preparedStatement = null;
 		int i = 0;
@@ -73,11 +73,12 @@ public class StoreDataDAO {
 			try {
 				//String user_id = getUserId(email);
 				preparedStatement = dbConnection
-						.prepareStatement("insert into subscription_details(`user_id`,`subscription_id`,`subscription_name`) values ( ?, ?,?)");
+						.prepareStatement("insert into subscription_details(`user_id`,`subscription_id`,`subscription_name`,`subscription_count`) values ( ?, ?,?,?)");
 				preparedStatement.setString(1, user_id);
 
 				preparedStatement.setString(2, id);
 				preparedStatement.setString(3, name);
+				preparedStatement.setLong(4, cnt);
 				i = preparedStatement.executeUpdate();
 			} catch (SQLException s) {
 				System.out.println("SQL Exception while inserting subscription ID: "
@@ -181,5 +182,36 @@ public class StoreDataDAO {
 
 		}
 		return sub_ids;
+	}
+	public static long getSubCnt(String email) {
+		PreparedStatement preparedStatement = null;
+		Connection dbConnection = DbConnect.getConnection();
+		int i = 0;
+		long sub_cnt = 0;
+		if (dbConnection != null) {
+			try {
+				preparedStatement = dbConnection
+						.prepareStatement("select subscription_count from subscription_details where user_id in (select user_id from user_details where email_address = ?)");
+				preparedStatement.setString(1, email);
+				ResultSet rs = preparedStatement.executeQuery();
+				boolean row = rs.next();
+				sub_cnt = rs.getLong("subscription_count");
+			} catch (SQLException s) {
+				System.out.println("SQL Exception while fetching subscription_count: "
+						+ s.getMessage());
+			} catch (Exception e) {
+				System.out.println("Exception while fetching subscription_count: "
+						+ e.getMessage());
+			} finally {
+				try {
+					preparedStatement.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+		return sub_cnt;
 	}
 }

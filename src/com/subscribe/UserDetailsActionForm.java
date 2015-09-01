@@ -11,6 +11,8 @@ private String firstName;
 private String lastName;
 private String telephone;
 private String userEmail;
+private String event;
+private String userId;
 public String getFirstName() {
 	return firstName;
 }
@@ -34,6 +36,18 @@ public String getUserEmail() {
 }
 public void setUserEmail(String userEmail) {
 	this.userEmail = userEmail;
+}
+public String getEvent() {
+	return event;
+}
+public void setEvent(String event) {
+	this.event = event;
+}
+public String getUserId() {
+	return userId;
+}
+public void setUserId(String userId) {
+	this.userId = userId;
 }
 }
 

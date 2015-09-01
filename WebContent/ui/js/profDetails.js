@@ -3,7 +3,15 @@ $(document).ready(function() {
 	
 	$('#saveButton').click(function(){
 		if($('#profileId').valid()) {
-			//alert(" Sumo");	
+			//alert(" Sumo");
+			$('#event').val("");
+			$('#profileId').submit();
+		}
+	});
+	$('#nextButton').click(function(){
+		if($('#profileId').valid()) {
+			//alert(" Sumo");
+			$('#event').val("next");
 			$('#profileId').submit();
 		}
 	});
@@ -26,8 +34,40 @@ $(document).ready(function() {
 		//alert(" Last Form");	
 		$('#editForm').submit();
 });
+	$('#userEmail').focusout(function(){
+		 if ($('#userEmail').valid()) {
+		$('#event').val("chkEmail");
+		var form_elem=$("#profileId").serializeArray();
+		 $.ajax({ 
+			 type: "POST", 
+		     url: "profile.do", 	
+		     data: form_elem,
+		     success: function(msg){
+		    	 if(msg!=null){
+		    	 $('#userId').val(msg.user_id);
+		    	 $('#firstName').val(msg.first_name);
+		    	 $('#lastName').val(msg.last_name);
+		    	 $('#telephone').val(msg.telephone);
+		    	
+		    	 $('#saveButton').hide();
+		    	 $('#nextButton').show();
+		    	 }else{
+		    		 $('#userId').val("");
+			    	 $('#firstName').val("");
+			    	 $('#lastName').val("");
+			    	 $('#telephone').val("");
+		    		 $('#saveButton').show();
+			    	 $('#nextButton').hide(); 
+		    	 }
+		    	 }
+		     });
+	}else{
+		 $('#saveButton').show();
+    	 $('#nextButton').hide(); 
+	}
+		 
 });
-
+});
 function validateForm() {
     var validator = $("form").validate({
 	  highlight:function(element,errorClass){

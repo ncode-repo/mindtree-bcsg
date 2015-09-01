@@ -62,9 +62,11 @@
 						Phone  number
 					</label>
 					<input type="text" name="telephone" class="form-control" id="telephone"  maxlength="15"/>
-					
+					<input type="hidden" value="" id="event" name="event"/>
+					<input type="hidden" value="" id="userId" name="userId"/>
 					<br />	
 					<input type="button" id="saveButton" class="btn btn-primary no-margin-top margin-right-twenty" name="saveUser" value="Save User">
+					<input type="button" id="nextButton" class="btn btn-primary no-margin-top margin-right-twenty displayNone" name="nxtUser" value="Next">
 				</form>
 			</div>
 			

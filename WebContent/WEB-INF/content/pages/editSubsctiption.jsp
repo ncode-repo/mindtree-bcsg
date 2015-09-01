@@ -142,8 +142,8 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-4 no-padding">
-				<input type="button" id="saveSubscritption" value="Save Subscritption" class="btn btn-primary no-margin-top no-margin-bottom" />;
-				<input type="button" value="Cancel" class="btn btn-primary no-margin-top  margin-left-ten no-margin-bottom" id="cancelBtn"/>;
+				<input type="button" id="saveSubscritption" value="Save Subscritption" class="btn btn-primary no-margin-top no-margin-bottom" />
+				<input type="button" value="Cancel" class="btn btn-primary no-margin-top  margin-left-ten no-margin-bottom" id="cancelBtn"/>
 			</div>
 			<div class="col-sm-4">
 			</div>

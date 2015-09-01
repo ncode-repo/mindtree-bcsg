@@ -1,6 +1,8 @@
 package com.actions;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 import ws.Hp_POC;
 
+import com.dao.UserDetailsDAO;
 import com.subscribe.UserDetailsActionForm;
 
 public class UserDetailsAction extends Action{
@@ -24,10 +27,23 @@ public class UserDetailsAction extends Action{
 			throws IOException, ServletException {
 		UserDetailsActionForm subscribeForm = (UserDetailsActionForm)form;
 		HttpSession session = request.getSession();
+		if("chkEmail".equalsIgnoreCase(subscribeForm.getEvent())){
+			JSONObject jsonObject = null;
+			jsonObject = getUserDetails(subscribeForm.getUserEmail());
+			response.setContentType("application/json");
+			// Get the printwriter object from response to write the required json object to the output stream      
+			PrintWriter out = response.getWriter();
+			// Assuming your json object is **jsonObject**, perform the following, it will return your json object  
+			out.print(jsonObject);
+			out.flush();
+			return null;
+		}
+		else{
 		JSONObject members = getSvcMembers(session);
 		session.setAttribute("userDetails", subscribeForm);
 		session.setAttribute("offerings", members);
 		return mapping.findForward("subscribe");
+	}
 	}
 
 	private static JSONObject getSvcMembers(HttpSession session){
@@ -39,5 +55,8 @@ public class UserDetailsAction extends Action{
 		}
 		return members;
 	}
-
+	private static JSONObject getUserDetails(String email){
+		JSONObject jsonObject =	UserDetailsDAO.getUserDetails(email);
+		return jsonObject;
+	}
 }

@@ -191,11 +191,11 @@ public class StoreDataDAO {
 		if (dbConnection != null) {
 			try {
 				preparedStatement = dbConnection
-						.prepareStatement("select subscription_count from subscription_details where user_id in (select user_id from user_details where email_address = ?)");
+						.prepareStatement("select MAX(subscription_count) from subscription_details where user_id in (select user_id from user_details where email_address = ?)");
 				preparedStatement.setString(1, email);
 				ResultSet rs = preparedStatement.executeQuery();
 				boolean row = rs.next();
-				sub_cnt = rs.getLong("subscription_count");
+				sub_cnt = rs.getLong(1);
 			} catch (SQLException s) {
 				System.out.println("SQL Exception while fetching subscription_count: "
 						+ s.getMessage());

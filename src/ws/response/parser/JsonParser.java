@@ -64,9 +64,6 @@ public static JSONObject parseJson(JSONObject result,ArrayList<String> subNames)
 								  sub_members.put(j);  
 							  }
 						  }
-						/*  form.setSvcId((String)j.get("id"));  
-						  form.setCatalogId((String)j.get("catalogId"));
-						  form.setCategoryName(j.getJSONObject("category").getString("name"));*/
 				  }
 			  }
 		} catch (Exception e) {

@@ -11,6 +11,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import ws.response.parser.JsonParser;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -70,7 +72,9 @@ public class Hp_POC {
 			JSONObject token = result.getJSONObject("token");
 			String token_id = token.getString("id");
 			System.out.println("Token ID: " + token_id);
-			modifySubscription(token_id, "8a83d7a44f280299014f6a3f17f13c4b", "8a83d7a44f1d0f21014f23000f8816df","4");
+			JSONObject sub_details = getSubscriptionDetails(token_id, "8a83d7a44f88f18d014f8d358b5e6167");
+			JSONObject fields = JsonParser.parseJson(sub_details, "4");
+			modifySubscription(token_id, "8a83d7a44f88f18d014f8d358b5e6167", "8a83d7a44f1d0f21014f23000f8816df","4","9_Full custom VM_2_mod",fields);
 			//listSvcOfferings(token_id, "");
 		} catch (Exception e) {
 			System.out.println("Exception message: " + e.getMessage());
@@ -323,9 +327,8 @@ public static String generateToken(){
 		}
 	return cancel_id;
 	}
-	public static String modifySubscription(String token,String sub_id,String catalogId,String cpus){
+	public static String modifySubscription(String token,String sub_id,String catalogId,String cpus,String sub_name,JSONObject fields){
 		JSONObject json = new JSONObject();
-		JSONObject fields = new JSONObject();
 		Client client = Client.create();
 		StringBuilder s = new StringBuilder();
 		StringBuilder uri = new StringBuilder();
@@ -336,11 +339,9 @@ public static String generateToken(){
 		s.append("--Abcdefgh \n");
 		s.append("Content-Disposition: form-data; name=\"requestForm\" \n\n");
 		try {
-			json.put("subscriptionName", "sampleRequest");
-			json.put("subscriptionDescription", "Sample");
+			json.put("subscriptionName", sub_name);
+			json.put("subscriptionDescription", "SampleModify");
 			json.put("fields", fields);
-			fields.put("field_08A6B20A_22AB_1E71_A6A2_0EF6568BA6C3_group", true);
-			fields.put("field_69a7a604_1169_4622_b14f_dd66b124e099", cpus);
 			json.put("action", "MODIFY_SUBSCRIPTION");
 			s.append(json.toString()+"\n --Abcdefgh--");
 			System.out.println("Request body: " + s.toString());

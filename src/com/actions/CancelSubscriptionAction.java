@@ -14,6 +14,7 @@ import org.apache.struts.action.ActionMapping;
 import org.codehaus.jettison.json.JSONObject;
 
 import ws.Hp_POC;
+import ws.response.parser.JsonParser;
 
 import com.subscribe.CancelActionForm;
 
@@ -31,7 +32,9 @@ public class CancelSubscriptionAction extends Action{
 			return mapping.findForward("modify");
 		}else if(cancelActionForm.getEvent().equalsIgnoreCase("modify")){
 			CancelActionForm modifyActionForm = (CancelActionForm)session.getAttribute("modify_form");
-			String modify_id = Hp_POC.modifySubscription(token_id, modifyActionForm.getSvcId(), modifyActionForm.getCatalogId(), cancelActionForm.getCpu());
+			JSONObject sub_details = (JSONObject)session.getAttribute("subDetails");
+			JSONObject fields = JsonParser.parseJson(sub_details, cancelActionForm.getCpu());
+			String modify_id = Hp_POC.modifySubscription(token_id, modifyActionForm.getSvcId(), modifyActionForm.getCatalogId(), cancelActionForm.getCpu(),modifyActionForm.getSubName(),fields);
 			session.setAttribute("modify_id", modify_id);
 			session.setAttribute("modifySvcName", modifyActionForm.getSubName());
 			return mapping.findForward("success");

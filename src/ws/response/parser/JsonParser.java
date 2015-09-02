@@ -79,5 +79,33 @@ public static JSONObject parseJson(JSONObject result,ArrayList<String> subNames)
 	}
 	return new_members;
 }
+public static JSONObject parseJson(JSONObject result,String cpus){
+	int records = 0;
+	JSONArray fields = new JSONArray();
+	Iterator<String> i =result.keys();
+	JSONObject fieldsForModify = new JSONObject();
+	while(i.hasNext()){
+		try {
+			String key = i.next();
+			  if(key.equalsIgnoreCase(JsonConstants.FIELDS)){
+				  fields = (JSONArray) result.get(key);
+				  for(int k=0;k<fields.length();k++){
+						  JSONObject j=  fields.getJSONObject(k);
+						  if(cpus.equalsIgnoreCase(j.getString(JsonConstants.DISPLAY_NAME))){
+							  fieldsForModify.put(j.getString(JsonConstants.ID), true);
+						  }
+						  if(JsonConstants.NCPU.equalsIgnoreCase(j.getString(JsonConstants.DISPLAY_NAME))){
+							  if(cpus.equalsIgnoreCase(j.getString(JsonConstants.VALUE)))
+							  fieldsForModify.put(j.getString(JsonConstants.ID), cpus);
+						  }
+				  }
+			  }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	return fieldsForModify;
+}
 
 }

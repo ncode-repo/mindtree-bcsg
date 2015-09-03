@@ -21,12 +21,13 @@ $(document).ready(function() {
 	});
 	$('#cancelSubscription').click(function(){
 		//alert(" Last Form");
+		$('#servicesForm').attr("action","cancel.do");
 		$('#event').val("abc");
 		$('#servicesForm').submit();
 });
 	$('#editSubscription').click(function(){
 		//alert(" Last Form");
-		//$('#servicesForm').attr("action","editSub.do");
+		$('#servicesForm').attr("action","modify.do");
 		
 		$('#servicesForm').submit();
 });

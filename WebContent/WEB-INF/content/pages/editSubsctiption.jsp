@@ -103,7 +103,7 @@
 		            <td>2</td>
 		            <td>Number of CPU</td>
 		            <td>
-						<form name="services" action="cancel.do" id="editForm"  method="post">
+						<form name="services" action="modify.do" id="editForm"  method="post">
 			            	<select id="cpu" name="cpu" class="form-control" style="width:90px">
 			            		<option value="1">1</option>
 			            		<option value="2">2</option>

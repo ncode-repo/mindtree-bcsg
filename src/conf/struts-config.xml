@@ -17,14 +17,14 @@
 		<action path="/welcome" forward="/WEB-INF/content/pages/profile.jsp"></action>
 		
 		<action path="/profile" name="UserDetailsForm" scope="session" type="com.actions.UserDetailsAction" >
-			<forward name="subscribe" path="/WEB-INF/content/pages/appDetails.jsp"></forward>
+			<forward name="subscribe" path="/appdetails.do" redirect="true"></forward>
 		</action>
 		
 		<action path="/getAppsDet" name="SubscribeForm" type="com.actions.SubscribeAction" >
 			<forward name="failure"  path="/WEB-INF/content/pages/appDetails.jsp" />
 			<forward name="success"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 		</action>
-		
+		<action path="/appdetails" forward="/WEB-INF/content/pages/appDetails.jsp"></action>
 		<action path="/editSub" forward="/WEB-INF/content/pages/editSubsctiption.jsp"></action>
 		
 		<action path="/manSub" forward="/WEB-INF/content/pages/manageSubsctiption.jsp"></action>
@@ -35,17 +35,24 @@
 		<action path="/usrLogin" forward="/WEB-INF/content/pages/login.jsp"></action>
 		
 		<action path="/login" scope="session" name="LoginForm" type="com.actions.LoginAction">
-			<forward name="success"  path="/WEB-INF/content/pages/dashboard.jsp" />
+			<forward name="success"  path="/subscription.do"  redirect="true" />
 			<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 		</action>
 		
 		<action path="/cancel" scope="request" name="CancelActionForm" type="com.actions.CancelSubscriptionAction">
-			<forward name="success"  path="/login.do" />
+			<forward name="success"  path="/subscription.do" redirect="true"/>
 			<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
 			<forward name="modify"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
 			<forward name="successm"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
 		</action>
-		
+		<action path="/modify" scope="request" name="CancelActionForm" type="com.actions.CancelSubscriptionAction">
+			<forward name="success"  path="/subscription.do" redirect="true"/>
+			<forward name="failure"  path="/WEB-INF/content/pages/serviceSuccess.jsp" />
+			<forward name="modify"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
+			<forward name="successm"  path="/WEB-INF/content/pages/editSubsctiption.jsp" />
+		</action>
+		<action path="/subscription" type="org.apache.struts.actions.ForwardAction" parameter="/WEB-INF/content/pages/dashboard.jsp">
+		</action>
 	</action-mappings>
 	<message-resources
 		parameter="ApplicationResources" null="false"/>

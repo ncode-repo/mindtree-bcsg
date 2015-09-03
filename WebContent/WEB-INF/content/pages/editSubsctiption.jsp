@@ -22,9 +22,9 @@
 			$.each(jsonArray.layout,function(c,d) {
 				$.each(d.layout, function(e, f) {
 					if(f.selected) {
-						fieldList.push(d.layout[0].fieldId);
+						fieldList.push(f.fieldId);
 						groupList.push(f.group);
-					}
+					} 
 				});
 			});
 			

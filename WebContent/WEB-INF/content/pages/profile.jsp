@@ -68,7 +68,7 @@
 					<input type="button" id="saveButton" class="btn btn-primary no-margin-top margin-right-twenty" name="saveUser" value="Save User">
 					<input type="button" id="nextButton" class="btn btn-primary no-margin-top margin-right-twenty displayNone" name="nxtUser" value="Next">
 					<br />
-					<p id="note" class="note">Note:Details will be saved once you subscribe to any service.</p>
+					<p id="note" class="note"><b>Note:</b> Details will be saved once you subscribe to any service.</p>
 				</form>
 			</div>
 			

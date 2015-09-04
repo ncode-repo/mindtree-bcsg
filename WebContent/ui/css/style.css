@@ -7474,4 +7474,5 @@ and (max-device-width : 360px) {
 }
 .note  {
   font-style: italic ;
+  float: left;
 }

@@ -52,18 +52,21 @@ $(document).ready(function() {
 		    	
 		    	 $('#saveButton').hide();
 		    	 $('#nextButton').show();
+		    	 $('#note').hide();
 		    	 }else{
 		    		 $('#userId').val("");
 			    	 $('#firstName').val("");
 			    	 $('#lastName').val("");
 			    	 $('#telephone').val("");
 		    		 $('#saveButton').show();
-			    	 $('#nextButton').hide(); 
+			    	 $('#nextButton').hide();
+			    	 $('#note').show();
 		    	 }
 		    	 }
 		     });
 	}else{
 		 $('#saveButton').show();
+		 $('#note').show();
     	 $('#nextButton').hide(); 
 	}
 		 

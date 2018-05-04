@@ -1,4 +1,4 @@
 mindtree-bcsg
 =============
 
-Repo for Tools created by mindtree-bcsg team
+Repo for Tools created tools to automate mundane tasks
